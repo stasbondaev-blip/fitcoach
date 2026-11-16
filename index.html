@@ -2,59 +2,182 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FitCoach Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FitCoach AI</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body {
-            font-family: -apple-system, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh; padding: 20px; color: white;
-        }
-        .container { max-width: 500px; margin: 0 auto; }
-        h1 { text-align: center; margin-bottom: 30px; }
-        .card {
-            background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px);
-            border-radius: 20px; padding: 25px; margin-bottom: 20px;
-        }
-        .workout-item {
-            background: rgba(255, 255, 255, 0.2); padding: 15px;
-            border-radius: 12px; margin-bottom: 10px;
-        }
-    </style>
-</head>
+        :root { --primary: #667eea; --secondary: #764ba2; --bg: #0f0c29; --card: rgba(255,255,255,0.1); }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, sans-serif; }
+        body { background: linear-gradient(135deg, var(--bg) 0%, #302b63 50%, #24243e 100%); color: white; min-height: 100vh; padding-bottom: 80px; }
+        
+        /* Навигация внизу */
+        .nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid rgba(255,255,255,0.1); z-index: 100; }
+        .nav-btn { background: none; border: none; color: rgba(255,255,255,0.5); font-size: 12px; display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; transition: 0.3s; }
+        .nav-btn.active { color: #fff; font-weight: bold; }
+        .nav-icon { font-size: 24px; }
+
+        /* Контент вкладок */
+        .tab { display: none; padding: 20px; animation: fadeIn 0.3s; }
+        .tab.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        h1 { font-size: 28px; margin-bottom: 20px; text-align: center; background: linear-gradient(to right, #fff, #a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        
+        .btn-main { width: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); border: none; color: white; padding: 16px; border-radius: 16px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); transition: transform 0.1s; }
+        .btn-main:active { transform: scale(0.98); }
+        .btn-main:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        /* Лоадер ИИ */
+        .ai-loader { display: none; text-align: center; padding: 30px; }
+        .spinner { width: 50px; height: 50px; border: 4px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Дыхание */
+        .breath-circle { width: 150px; height: 150px; background: radial-gradient(circle, var(--primary), var(--secondary)); border-radius: 50%; margin: 40px auto; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; box-shadow: 0 0 30px rgba(102, 126, 234, 0.5); transition: transform 4s ease-in-out, opacity 4s; }
+        .breath-circle.inhale { transform: scale(1.5); opacity: 0.8; }
+        .breath-circle.hold { transform: scale(1.5); opacity: 0.6; }
+        .breath-circle.exhale { transform: scale(1); opacity: 1; }
+
+        .stat-number { font-size: 48px; font-weight: bold; text-align: center; color: #a5b4fc; }
+        .stat-label { text-align: center; opacity: 0.7; margin-top: 5px; }
+        
+        .workout-item { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 4px solid var(--primary); }
+        .workout-item h3 { font-size: 16px; margin-bottom: 5px; }
+        .workout-item p { font-size: 14px; opacity: 0.8; }
+    </style</head>
 <body>
-    <div class="container">
-        <h1>💪 FitCoach Pro</h1>
+
+    <!-- Вкладка 1: ИИ Тренировка -->
+    <div id="tab-workout" class="tab active">
+        <h1>🤖 ИИ-Тренер</h1>
         <div class="card">
-            <h2>Тренировка на сегодня</h2>
-            <div class="workout-item"><h3>🏃 Разминка</h3><p>5 минут</p></div>
-            <div class="workout-item"><h3>💪 Приседания</h3><p>3 по 15</p></div>
+            <h2 style="margin-bottom: 10px;">Готов к тренировке?</h2>
+            <p style="opacity: 0.8; margin-bottom: 15px;">Нейросеть проанализирует твой профиль и создаст идеальную программу на сегодня.</p>
+            <button class="btn-main" id="generateBtn" onclick="generateWorkout()">✨ Сгенерировать программу</button>
         </div>
+        
+        <div class="ai-loader" id="aiLoader">
+            <div class="spinner"></div>
+            <p>ИИ анализирует твой профиль и подбирает упражнения...</p>
+        </div>
+
+        <div id="workoutResult" style="display: none;">
+            <!-- Сюда вставится программа -->
+        </div>
+    </div>
+
+    <!-- Вкладка 2: Дыхание -->
+    <div id="tab-breath" class="tab">
+        <h1>🧘 Дыхание 4-7-8</h1>
+        <div class="card" style="text-align: center;">
+            <p style="margin-bottom: 20px; opacity: 0.8;">Следуй за кругом для восстановления после тренировки.</p>
+            <div class="breath-circle" id="breathCircle">Старт</div>
+            <button class="btn-main" onclick="startBreathing()">▶ Начать практику</button>
+        </div>
+    </div>
+
+    <!-- Вкладка 3: Прогресс -->
+    <div id="tab-stats" class="tab">
+        <h1>📊 Прогресс</h1>
+        <div class="card">
+            <div class="stat-number" id="streakCount">0</div>
+            <div class="stat-label">Дней подряд</div>
+        </div>
+        <div class="card">
+            <div class="stat-number" id="totalWorkouts">0</div>
+            <div class="stat-label">Всего тренировок</div>
+        </div>
+    </div>
+
+    <!-- Навигация -->
+    <div class="nav">
+        <button class="nav-btn active" onclick="switchTab('workout', this)">
+            <span class="nav-icon">🏋️</span>
+            <span>Тренировка</span>
+        </button>
+        <button class="nav-btn" onclick="switchTab('breath', this)">
+            <span class="nav-icon">🧘</span>
+            <span>Дыхание</span>
+        </button>
+        <button class="nav-btn" onclick="switchTab('stats', this)">
+            <span class="nav-icon">📊</span>
+            <span>Прогресс</span>
+        </button
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+        tg.ready();
 
-        // Создаем кнопку
-        tg.MainButton.setText("🚀 НАЧАТЬ ТРЕНИРОВКУ");
-        tg.MainButton.show();
-        tg.MainButton.enable();
+        // Переключение вкладок
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            btn.classList.add('active');
+        }
 
-        // При нажатии отправляем данные через ОБЫЧНОЕ текстовое сообщение
-        tg.MainButton.onClick(function() {
-            tg.MainButton.setText("✅ ОТПРАВЛЕНО!");
-            tg.MainButton.color = "#2ecc71";
-            
-            // Отправляем как обычный текст — это ГАРАНТИРОВАННО дойдет до бота
-            tg.sendData('start_workout');
-            
-            // Дополнительно закрываем приложение через 1 секунду
+        // Имитация ИИ-генерации (в будущем здесь будет fetch к реальному API)
+        function generateWorkout() {
+            const btn = document.getElementById('generateBtn');
+            const loader = document.getElementById('aiLoader');
+            const result = document.getElementById('workoutResult');
+
+            btn.style.display = 'none';
+            loader.style.display = 'block';
+
+            // Имитируем задержку "мышления" ИИ (2 секунды)
             setTimeout(() => {
-                tg.close();
-            }, 1000);
-        });
+                loader.style.display = 'none';
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <div class="card">
+                        <h2 style="color: #a5b4fc; margin-bottom: 15px;">🔥 Программа от ИИ</h2>
+                        <div class="workout-item"><h3>1. Разминка</h3><p>5 минут: вращения, наклоны, бег на месте</p></div>
+                        <div class="workout-item"><h3>2. Приседания с прыжком</h3><p>3 подхода по 15 раз (Отдых: 45 сек)</p></div>
+                        <div class="workout-item"><h3>3. Отжимания</h3><p>3 подхода по 12 раз (Отдых: 45 сек)</p></div>
+                        <div class="workout-item"><h3>4. Планка</h3><p>3 подхода по 45 секунд</p></div>
+                        <div class="workout-item"><h3>5. Заминка</h3><p>5 минут растяжки + дыхание 4-7-8</p></div>
+                        <button class="btn-main" style="background: #2ecc71; margin-top: 20px;" onclick="finishWorkout()">✅ Завершить и сохранить</button>
+                    </div>
+                `;
+            }, 2000);
+        }
+
+        // Завершение тренировки
+        function finishWorkout() {
+            tg.MainButton.setText("💾 Сохранить результат");
+            tg.MainButton.show();
+            tg.MainButton.onClick(() => {
+                tg.sendData('workout_completed');
+            });
+        }
+
+        // Анимация дыхания
+        function startBreathing() {
+            const circle = document.getElementById('breathCircle');
+            const steps = [
+                { text: "Вдох (4 сек)", class: "inhale", duration: 4000 },
+                { text: "Задержка (7 сек)", class: "hold", duration: 7000 },
+                { text: "Выдох (8 сек)", class: "exhale", duration: 8000 }
+            ];
+            let currentStep = 0;
+
+            function nextStep() {
+                const step = steps[currentStep];
+                circle.innerText = step.text;
+                circle.className = 'breath-circle ' + step.class;
+                
+                currentStep = (currentStep + 1) % steps.length;
+                setTimeout(nextStep, step.duration);
+            }
+            nextStep();
+        }
+
+        // Получение данных от бота (например, статистики)
+        // В будущем мы будем передавать их через tg.sendData или fetch
     </script>
 </body>
 </html>
