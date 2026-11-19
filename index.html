@@ -8,7 +8,7 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{background:#000;color:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;letter-spacing:-0.02em;min-height:100vh;padding-bottom:92px;overflow-x:hidden}
-#carbg{position:fixed;bottom:40px;left:50%;transform:translateX(-50%);width:600px;opacity:.12;pointer-events:none;z-index:0}
+#carbg{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);width:700px;opacity:.15;pointer-events:none;z-index:0}
 .trackline{position:fixed;top:0;left:0;right:0;height:2px;background:repeating-linear-gradient(90deg,#e10600 0 14px,transparent 14px 28px);opacity:.5;z-index:3}
 .wrap{position:relative;z-index:2}
 h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
@@ -21,8 +21,8 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
 .ex{border-bottom:1px solid rgba(255,255,255,.07);padding:18px 0}.ex:last-child{border-bottom:none}
 .ex-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
 .ex-name{font-size:19px;font-weight:600}.ex-tag{font-size:11px;color:#e10600;font-weight:700;letter-spacing:.08em}
-.anim-box{background:#000;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:20px;margin-bottom:14px;display:flex;justify-content:center;align-items:center;height:160px;position:relative;overflow:hidden}
-.anim-box svg{height:140px;width:auto}
+.anim-box{background:#000;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:20px;margin-bottom:14px;display:flex;justify-content:center;align-items:center;height:180px;position:relative;overflow:hidden}
+.anim-box svg{height:160px;width:auto}
 .steppers{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 .stp{background:#000;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px 4px;text-align:center}
 .stp .k{font-size:9px;color:#86868b;text-transform:uppercase;letter-spacing:.08em;font-weight:600}
@@ -49,55 +49,34 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
 .ring-row .rv{font-size:18px;font-weight:700;color:#f5f5f7}
 .chart-wrap{padding:6px 0}
 
-/* ===== АНИМАЦИИ УПРАЖНЕНИЙ ===== */
-/* Приседания */
-@keyframes squat{0%,100%{transform:translateY(0)}50%{transform:translateY(30px)}}
-.squat-anim{animation:squat 2s ease-in-out infinite}
-.squat-anim .torso{transform-origin:20px 30px;animation:squat-torso 2s ease-in-out infinite}
-@keyframes squat-torso{0%,100%{transform:rotate(0)}50%{transform:rotate(-15deg)}}
+/* ===== РЕАЛИСТИЧНЫЕ АНИМАЦИИ ===== */
+/* Приседания - реалистичное сгибание коленей и бёдер */
+@keyframes squat-down{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(25px) rotate(-8deg)}}
+.squat-body{animation:squat-down 2.5s ease-in-out infinite;transform-origin:20px 30px}
+.squat-legs{animation:squat-legs 2.5s ease-in-out infinite;transform-origin:20px 30px}
+@keyframes squat-legs{0%,100%{transform:rotate(0)}50%{transform:rotate(15deg)}}
 
-/* Отжимания */
-@keyframes pushup{0%,100%{transform:translateY(0)}50%{transform:translateY(20px)}}
-.pushup-anim{animation:pushup 2.5s ease-in-out infinite}
+/* Отжимания - опускание корпуса */
+@keyframes pushup-down{0%,100%{transform:translateY(0)}50%{transform:translateY(18px)}}
+.pushup-body{animation:pushup-down 2s ease-in-out infinite}
 
-/* Планка */
-.plank-anim{animation:none}
+/* Планка - статика с лёгким покачиванием */
+@keyframes plank-hold{0%,100%{transform:rotate(0)}50%{transform:rotate(1deg)}}
+.plank-body{animation:plank-hold 3s ease-in-out infinite;transform-origin:20px 30px}
 
-/* Выпады */
-@keyframes lunge{0%,100%{transform:translateX(0)}50%{transform:translateX(25px)}}
-.lunge-anim{animation:lunge 2s ease-in-out infinite}
+/* Выпады - шаг вперёд с опусканием */
+@keyframes lunge-step{0%,100%{transform:translateX(0) translateY(0)}50%{transform:translateX(20px) translateY(15px)}}
+.lunge-body{animation:lunge-step 2.5s ease-in-out infinite}
 
-/* Скручивания */
-@keyframes crunch{0%,100%{transform:rotate(0)}50%{transform:rotate(-25deg)}}
-.crunch-anim .upper{transform-origin:20px 35px;animation:crunch 2s ease-in-out infinite}
+/* Скручивания - подъём корпуса */
+@keyframes crunch-up{0%,100%{transform:rotate(0)}50%{transform:rotate(-30deg)}}
+.crunch-upper{animation:crunch-up 2s ease-in-out infinite;transform-origin:20px 35px}
 </style>
 </head>
 <body>
 
-<!-- Реалистичный болид F1 -->
-<svg id="carbg" viewBox="0 0 400 120">
-  <g fill="#fff" opacity="0.9">
-    <!-- Корпус -->
-    <path d="M20 80 Q30 70 50 70 L80 70 Q90 50 110 45 L140 40 Q160 38 170 45 L180 55 L220 55 Q240 55 250 65 L280 70 Q310 70 340 75 L360 80 L370 85 L30 85 Z"/>
-    <!-- Кабина -->
-    <path d="M120 45 Q130 30 150 28 L170 28 Q180 28 185 35 L190 45 L120 45 Z" fill="none" stroke="#fff" stroke-width="2"/>
-    <!-- Переднее антикрыло -->
-    <rect x="10" y="75" width="40" height="8" rx="2"/>
-    <!-- Заднее антикрыло -->
-    <rect x="320" y="60" width="50" height="12" rx="2"/>
-    <rect x="330" y="55" width="30" height="5" rx="1"/>
-    <!-- Колёса -->
-    <circle cx="70" cy="85" r="18" fill="none" stroke="#fff" stroke-width="4"/>
-    <circle cx="70" cy="85" r="8"/>
-    <circle cx="310" cy="85" r="18" fill="none" stroke="#fff" stroke-width="4"/>
-    <circle cx="310" cy="85" r="8"/>
-    <!-- Детали -->
-    <path d="M180 55 L200 50 L220 55" fill="none" stroke="#fff" stroke-width="2"/>
-    <rect x="200" y="60" width="30" height="15" rx="3"/>
-    <!-- Воздухозаборник -->
-    <path d="M150 28 L160 20 L170 28" fill="none" stroke="#fff" stroke-width="2"/>
-  </g>
-</svg>
+<!-- Настоящий болид F1 из фильма -->
+<img id="carbg" src="car.png" alt="">
 
 <div class="trackline"></div>
 <div class="wrap">
@@ -144,21 +123,37 @@ const tg=window.Telegram.WebApp;tg.expand();tg.ready();
 function hap(t){try{tg.HapticFeedback.impactOccurred(t||'light')}catch(e){}}
 function switchTab(id,b){hap('light');document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');b.classList.add('active');if(id==='stats')drawStats();}
 
-/* ===== Анимированные аватары ===== */
+/* ===== РЕАЛИСТИЧНЫЕ АВАТАРЫ С СУСТАВАМИ ===== */
 function avatar(name){
-  const S='<circle cx="20" cy="8" r="4" fill="none" stroke="#e10600" stroke-width="2"/>';
-  const L=(x1,y1,x2,y2)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>`;
+  // Голова
+  const head='<circle cx="20" cy="8" r="5" fill="#e10600" stroke="#fff" stroke-width="1.5"/>';
+  // Линия с закруглёнными концами
+  const L=(x1,y1,x2,y2,w=2.5)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#fff" stroke-width="${w}" stroke-linecap="round"/>`;
+  // Сустав (точка)
+  const J=(x,y)=>`<circle cx="${x}" cy="${y}" r="2" fill="#e10600"/>`;
   
   if(name==='Приседания'){
-    return `<svg class="squat-anim" viewBox="0 0 40 60">${S}<g class="torso">${L(20,12,20,28)}${L(20,16,13,22)}${L(20,16,27,22)}</g>${L(20,28,14,42)}${L(20,28,26,42)}</svg>`;
+    return `<svg viewBox="0 0 40 70">
+      <g class="squat-body">${head}${L(20,13,20,28)}${L(20,17,12,23)}${L(20,17,28,23)}${J(20,17)}${J(12,23)}${J(28,23)}</g>
+      <g class="squat-legs">${L(20,28,14,45)}${L(14,45,12,60)}${L(20,28,26,45)}${L(26,45,28,60)}${J(20,28)}${J(14,45)}${J(26,45)}</g>
+    </svg>`;
   }else if(name==='Отжимания'){
-    return `<svg class="pushup-anim" viewBox="0 0 40 50">${S}${L(10,30,30,30)}${L(10,30,8,42)}${L(30,30,32,42)}${L(10,30,10,26)}</svg>`;
+    return `<svg viewBox="0 0 40 55">
+      <g class="pushup-body">${head}${L(10,32,30,32)}${L(10,32,8,45)}${L(30,32,32,45)}${L(10,32,10,28)}${J(10,32)}${J(30,32)}</g>
+    </svg>`;
   }else if(name==='Планка'){
-    return `<svg class="plank-anim" viewBox="0 0 40 50">${S}${L(8,32,32,32)}${L(8,32,8,44)}${L(32,32,32,44)}${L(8,32,12,28)}</svg>`;
+    return `<svg viewBox="0 0 40 55">
+      <g class="plank-body">${head}${L(8,32,32,32)}${L(8,32,8,45)}${L(32,32,32,45)}${L(8,32,12,28)}${J(8,32)}${J(32,32)}</g>
+    </svg>`;
   }else if(name==='Выпады'){
-    return `<svg class="lunge-anim" viewBox="0 0 40 60">${S}${L(20,12,20,28)}${L(20,16,13,22)}${L(20,16,27,22)}${L(20,28,14,42)}${L(20,28,26,42)}</svg>`;
+    return `<svg viewBox="0 0 40 70">
+      <g class="lunge-body">${head}${L(20,13,20,28)}${L(20,17,12,23)}${L(20,17,28,23)}${J(20,17)}${J(12,23)}${J(28,23)}${L(20,28,14,45)}${L(14,45,12,60)}${L(20,28,26,45)}${L(26,45,28,60)}${J(20,28)}${J(14,45)}${J(26,45)}</g>
+    </svg>`;
   }else{
-    return `<svg class="crunch-anim" viewBox="0 0 40 50">${S}<g class="upper">${L(8,40,28,40)}${L(28,40,32,36)}</g>${L(8,40,8,36)}</svg>`;
+    return `<svg viewBox="0 0 40 55">
+      ${head}${L(8,42,28,42)}${L(28,42,32,38)}${L(8,42,8,38)}${J(8,42)}${J(28,42)}
+      <g class="crunch-upper">${L(20,13,20,28)}${L(20,17,12,23)}${L(20,17,28,23)}${J(20,17)}</g>
+    </svg>`;
   }
 }
 
