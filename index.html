@@ -7,109 +7,86 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{background:#000;color:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;letter-spacing:-0.02em;min-height:100vh;padding-bottom:90px;overflow-x:hidden}
-body::before{content:"";position:fixed;inset:0;background:repeating-linear-gradient(115deg,transparent 0 60px,rgba(225,6,0,0.05) 60px 64px),repeating-linear-gradient(115deg,transparent 0 140px,rgba(225,6,0,0.08) 140px 142px);pointer-events:none;z-index:0}
-body::after{content:"01";position:fixed;top:-30px;right:-10px;font-size:220px;font-weight:800;color:rgba(255,255,255,0.03);letter-spacing:-0.06em;pointer-events:none;z-index:0}
-.trackline{position:fixed;top:0;left:0;right:0;height:2px;background:repeating-linear-gradient(90deg,#e10600 0 14px,transparent 14px 28px);opacity:.5;z-index:1}
+html,body{background:#000;color:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;letter-spacing:-0.02em;min-height:100vh;padding-bottom:92px;overflow-x:hidden}
+#carbg{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);width:520px;opacity:.06;pointer-events:none;z-index:0;filter:blur(1px)}
+.trackline{position:fixed;top:0;left:0;right:0;height:2px;background:repeating-linear-gradient(90deg,#e10600 0 14px,transparent 14px 28px);opacity:.5;z-index:3}
 .wrap{position:relative;z-index:2}
-h1{font-size:32px;font-weight:700;letter-spacing:-0.03em;margin:26px 20px 6px}
+h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
 .subtitle{font-size:15px;color:#86868b;margin:0 20px 24px}
 .section{padding:0 20px;margin-bottom:14px}
 .card{background:#1c1c1e;border-radius:18px;padding:20px;border:1px solid rgba(255,255,255,.06)}
 .card h2{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:#86868b;font-weight:600;margin-bottom:12px}
 .btn{width:100%;background:#e10600;color:#fff;border:none;padding:16px;border-radius:14px;font-size:17px;font-weight:600;cursor:pointer;margin-top:14px;transition:opacity .2s}
-.btn:active{opacity:.65}
-.btn.green{background:#30d158;color:#000}
-.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.15);color:#f5f5f7}
-.ex{border-bottom:1px solid rgba(255,255,255,.07);padding:18px 0}
-.ex:last-child{border-bottom:none}
+.btn:active{opacity:.65}.btn.green{background:#30d158;color:#000}
+.ex{border-bottom:1px solid rgba(255,255,255,.07);padding:18px 0}.ex:last-child{border-bottom:none}
 .ex-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
-.ex-name{font-size:19px;font-weight:600}
-.ex-tag{font-size:11px;color:#e10600;font-weight:700;letter-spacing:.08em}
+.ex-name{font-size:19px;font-weight:600}.ex-tag{font-size:11px;color:#e10600;font-weight:700;letter-spacing:.08em}
 .stages{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
 .stage{background:#000;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px 6px;text-align:center}
 .stage .lbl{font-size:9px;color:#86868b;letter-spacing:.1em;font-weight:700;margin-bottom:6px}
-.stage svg{width:34px;height:44px;display:block;margin:0 auto 6px}
+.stage svg{width:40px;height:50px;display:block;margin:0 auto 6px}
 .stage .desc{font-size:10px;color:#f5f5f7;line-height:1.25}
 .steppers{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 .stp{background:#000;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px 4px;text-align:center}
 .stp .k{font-size:9px;color:#86868b;text-transform:uppercase;letter-spacing:.08em;font-weight:600}
 .stp .v{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;margin:4px 0}
 .stp .r{display:flex;justify-content:center;gap:10px}
-.stp button{width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:transparent;color:#fff;font-size:16px;line-height:1;cursor:pointer}
+.stp button{width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:transparent;color:#fff;font-size:16px;cursor:pointer}
 .stp button:active{background:#e10600;border-color:#e10600}
 .nav{position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-around;padding:10px 0 22px;z-index:100}
 .nav-btn{background:none;border:none;color:#86868b;font-size:10px;font-weight:500;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:4px 16px}
-.nav-btn.active{color:#f5f5f7}
-.nav-icon{font-size:20px;line-height:1}
-.tab{display:none;animation:fadeIn .25s ease}
-.tab.active{display:block}
+.nav-btn.active{color:#f5f5f7}.nav-icon{font-size:20px}
+.tab{display:none;animation:fadeIn .25s ease}.tab.active{display:block}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .loader{width:32px;height:32px;border:2px solid rgba(255,255,255,.1);border-top-color:#e10600;border-radius:50%;animation:spin .8s linear infinite;margin:30px auto}
 @keyframes spin{to{transform:rotate(360deg)}}
-.center{text-align:center;color:#86868b;font-size:14px}
-.hidden{display:none!important}
-.quote{font-size:26px;font-weight:700;line-height:1.3;letter-spacing:-0.03em;margin:20px 0 14px}
+.center{text-align:center;color:#86868b;font-size:14px}.hidden{display:none!important}
+.quote{font-size:24px;font-weight:700;line-height:1.35;letter-spacing:-.03em;margin:20px 0 12px}
 .quote-author{font-size:13px;color:#e10600;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
-.big-number{font-size:60px;font-weight:700;letter-spacing:-0.04em;line-height:1}
-.big-number.accent{color:#e10600}
-.label{font-size:12px;color:#86868b;text-transform:uppercase;letter-spacing:.08em;margin-top:8px;font-weight:600}
-.breath-circle{width:200px;height:200px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#ff3b30,#e10600);margin:40px auto;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:500;color:#fff;transition:transform 4s cubic-bezier(.4,0,.2,1),opacity 4s;box-shadow:0 0 60px rgba(225,6,0,.3)}
-.breath-circle.inhale{transform:scale(1.4);opacity:.85}
-.breath-circle.hold{transform:scale(1.4);opacity:.7}
-.breath-circle.exhale{transform:scale(1);opacity:1}
+/* Дыхание */
+#breathSvg{width:100%;max-width:320px;display:block;margin:10px auto}
+#breathLabel{text-align:center;font-size:22px;font-weight:700;letter-spacing:-.02em;margin-top:6px}
+#breathCount{text-align:center;font-size:14px;color:#86868b;font-variant-numeric:tabular-nums}
+/* Прогресс — кольца Apple */
+.rings{display:flex;justify-content:center;margin:10px 0 4px}
+.ring-row{display:flex;justify-content:space-around;padding:6px 0}
+.ring-row .ri{text-align:center;font-size:12px;color:#86868b}
+.ring-row .rv{font-size:18px;font-weight:700;color:#f5f5f7}
+.chart-wrap{padding:6px 0}
 </style>
 </head>
 <body>
+<svg id="carbg" viewBox="0 0 200 60"><path d="M10 45 L40 45 Q45 35 60 35 L75 35 Q85 20 100 20 Q115 20 120 35 L150 35 Q170 35 185 42 L190 45 L10 45 Z M55 45 a7 7 0 1 0 14 0 a7 7 0 1 0 -14 0 M135 45 a7 7 0 1 0 14 0 a7 7 0 1 0 -14 0" fill="#fff"/></svg>
 <div class="trackline"></div>
 <div class="wrap">
 
 <div id="tab-workout" class="tab active">
-  <h1>Тренировка</h1>
-  <p class="subtitle">Программа под твой профиль на сегодня</p>
-
-  <div id="intro" class="section">
-    <div class="card">
-      <h2>Статус</h2>
-      <p style="font-size:16px;line-height:1.45">Готов к старту. Настрой нагрузку под себя и фиксируй каждый подход.</p>
-      <button class="btn" onclick="generate()">Создать программу</button>
-    </div>
-  </div>
-
-  <div id="loader" class="section hidden">
-    <div class="loader"></div>
-    <p class="center">Формирование программы...</p>
-  </div>
-
-  <div id="program" class="section hidden">
-    <div class="card"><div id="exList"></div></div>
-    <button class="btn green" onclick="finish()">Завершить тренировку</button>
-  </div>
-
-  <div id="motivation" class="section hidden">
-    <div class="card" style="text-align:center;padding:34px 22px">
-      <h2 style="margin-bottom:20px">Финиш прямой</h2>
-      <div class="quote" id="quoteText"></div>
-      <div class="quote-author" id="quoteAuthor"></div>
-      <button class="btn" style="margin-top:26px" onclick="sendResult()">Отправить результат</button>
-    </div>
-  </div>
+  <h1>Тренировка</h1><p class="subtitle">Программа под твой профиль на сегодня</p>
+  <div id="intro" class="section"><div class="card"><h2>Статус</h2><p style="font-size:16px;line-height:1.45">Готов к старту. Настрой нагрузку и фиксируй каждый подход.</p><button class="btn" onclick="generate()">Создать программу</button></div></div>
+  <div id="loader" class="section hidden"><div class="loader"></div><p class="center">Формирование программы...</p></div>
+  <div id="program" class="section hidden"><div class="card"><div id="exList"></div></div><button class="btn green" onclick="finish()">Завершить тренировку</button></div>
+  <div id="motivation" class="section hidden"><div class="card" style="text-align:center;padding:34px 22px"><h2 style="margin-bottom:20px">Финиш прямой</h2><div class="quote" id="quoteText"></div><div class="quote-author" id="quoteAuthor"></div><button class="btn" style="margin-top:26px" onclick="sendResult()">Отправить результат</button></div></div>
 </div>
 
 <div id="tab-breath" class="tab">
-  <h1>Дыхание</h1>
-  <p class="subtitle">Техника 4-7-8 для восстановления</p>
-  <div class="section">
-    <div class="breath-circle" id="breathCircle">Старт</div>
+  <h1>Дыхание</h1><p class="subtitle">Треугольник дыхания · вдох 4 · пауза 7 · выдох 8</p>
+  <div class="section"><div class="card" style="text-align:center">
+    <svg id="breathSvg" viewBox="0 0 200 180">
+      <polygon points="100,20 30,150 170,150" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="3"/>
+      <circle id="ball" r="14" cx="100" cy="20" fill="#e10600"/>
+    </svg>
+    <div id="breathLabel">Готов</div><div id="breathCount">0:00</div>
     <button class="btn" onclick="startBreath()">Начать</button>
-  </div>
+  </div></div>
 </div>
 
 <div id="tab-stats" class="tab">
-  <h1>Прогресс</h1>
-  <p class="subtitle">Твоя статистика</p>
-  <div class="section"><div class="card"><div class="big-number accent" id="streakNum">0</div><div class="label">Дней подряд</div></div></div>
-  <div class="section"><div class="card"><div class="big-number" id="totalNum">0</div><div class="label">Всего тренировок</div></div></div>
+  <h1>Прогресс</h1><p class="subtitle">Активность за неделю</p>
+  <div class="section"><div class="card">
+    <div class="rings"><svg id="ringsSvg" width="180" height="180" viewBox="0 0 180 180"></svg></div>
+    <div class="ring-row"><div class="ri">Тренировки<div class="rv" id="r1">0</div></div><div class="ri">Подходы<div class="rv" id="r2">0</div></div><div class="ri">Дыхание<div class="rv" id="r3">0</div></div></div>
+  </div></div>
+  <div class="section"><div class="card"><h2>Дни активности</h2><div class="chart-wrap"><svg id="chartSvg" width="100%" height="120" viewBox="0 0 300 120"></svg></div></div></div>
 </div>
 
 </div>
@@ -123,93 +100,106 @@ h1{font-size:32px;font-weight:700;letter-spacing:-0.03em;margin:26px 20px 6px}
 <script>
 const tg=window.Telegram.WebApp;tg.expand();tg.ready();
 function hap(t){try{tg.HapticFeedback.impactOccurred(t||'light')}catch(e){}}
+function switchTab(id,b){hap('light');document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');b.classList.add('active');if(id==='stats')drawStats();}
 
-function switchTab(id,b){hap('light');document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');b.classList.add('active')}
-
-/* SVG-силуэт по фазе */
-function pose(p){
-  // p: 'up','down','hold'
-  const lines={
-    up:'<line x1="17" y1="16" x2="17" y2="30" stroke="#fff" stroke-width="2"/><line x1="17" y1="20" x2="10" y2="26" stroke="#fff" stroke-width="2"/><line x1="17" y1="20" x2="24" y2="26" stroke="#fff" stroke-width="2"/><line x1="17" y1="30" x2="11" y2="42" stroke="#fff" stroke-width="2"/><line x1="17" y1="30" x2="23" y2="42" stroke="#fff" stroke-width="2"/>',
-    down:'<line x1="17" y1="24" x2="17" y2="32" stroke="#fff" stroke-width="2"/><line x1="17" y1="26" x2="9" y2="30" stroke="#fff" stroke-width="2"/><line x1="17" y1="26" x2="25" y2="30" stroke="#fff" stroke-width="2"/><line x1="17" y1="32" x2="11" y2="40" stroke="#fff" stroke-width="2"/><line x1="17" y1="32" x2="23" y2="40" stroke="#fff" stroke-width="2"/>',
-    hold:'<line x1="10" y1="26" x2="26" y2="26" stroke="#fff" stroke-width="2"/><line x1="10" y1="26" x2="8" y2="40" stroke="#fff" stroke-width="2"/><line x1="26" y1="26" x2="28" y2="40" stroke="#fff" stroke-width="2"/><line x1="10" y1="26" x2="10" y2="18" stroke="#fff" stroke-width="2"/><line x1="26" y1="26" x2="26" y2="18" stroke="#fff" stroke-width="2"/>'
-  };
-  return '<svg viewBox="0 0 34 44"><circle cx="17" cy="10" r="4" fill="none" stroke="#e10600" stroke-width="2"/>'+(lines[p]||lines.up)+'</svg>';
+/* ===== Честные схемы движения ===== */
+function fig(name,phase){
+  // возвращает SVG-силуэт для конкретного упражнения и фазы
+  const S='<circle cx="20" cy="8" r="4" fill="none" stroke="#e10600" stroke-width="2"/>';
+  const L=(x1,y1,x2,y2)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#fff" stroke-width="2"/>`;
+  let body='';
+  if(name==='Приседания'){
+    if(phase===0)body=L(20,12,20,28)+L(20,16,13,22)+L(20,16,27,22)+L(20,28,14,42)+L(20,28,26,42);
+    if(phase===1)body=L(20,16,20,26)+L(20,19,12,23)+L(20,19,28,23)+L(20,26,12,32)+L(12,32,14,44)+L(20,26,28,32)+L(28,32,26,44);
+    if(phase===2)body=L(20,12,20,28)+L(20,16,13,22)+L(20,16,27,22)+L(20,28,14,42)+L(20,28,26,42);
+  }else if(name==='Отжимания'){
+    if(phase===0)body=L(10,30,30,30)+L(10,30,8,42)+L(30,30,32,42)+L(10,30,10,26);
+    if(phase===1)body=L(10,38,30,38)+L(10,38,8,46)+L(30,38,32,46)+L(10,38,10,34);
+    if(phase===2)body=L(10,30,30,30)+L(10,30,8,42)+L(30,30,32,42)+L(10,30,10,26);
+  }else if(name==='Планка'){
+    body=L(8,32,32,32)+L(8,32,8,44)+L(32,32,32,44)+L(8,32,12,28);
+  }else if(name==='Выпады'){
+    if(phase===0)body=L(20,12,20,28)+L(20,16,13,22)+L(20,16,27,22)+L(20,28,14,42)+L(20,28,26,42);
+    if(phase===1)body=L(20,16,20,28)+L(20,19,13,24)+L(20,19,27,24)+L(20,28,12,40)+L(12,40,12,46)+L(20,28,28,34)+L(28,34,30,46);
+    if(phase===2)body=L(20,12,20,28)+L(20,16,13,22)+L(20,16,27,22)+L(20,28,14,42)+L(20,28,26,42);
+  }else{ // Скручивания
+    if(phase===0)body=L(8,40,28,40)+L(28,40,32,36)+L(8,40,8,36);
+    if(phase===1)body=L(10,40,26,34)+L(26,34,30,30)+L(10,40,10,36);
+    if(phase===2)body=L(8,40,28,40)+L(28,40,32,36)+L(8,40,8,36);
+  }
+  return `<svg viewBox="0 0 40 50">${S}${body}</svg>`;
 }
 
 const exercises=[
- {id:'sq',name:'Приседания',tag:'СИЛА',phases:[['up','Старт, стойка'],['down','Присед до параллели'],['up','Возврат в стойку']],sets:3,reps:15,weight:0},
- {id:'pu',name:'Отжимания',tag:'СИЛА',phases:[['hold','Упор лёжа'],['down','Спуск к полу'],['hold','Отжимание вверх']],sets:3,reps:12,weight:0},
- {id:'pl',name:'Планка',tag:'КОР',phases:[['hold','Упор на локтях'],['hold','Удержание'],['hold','Линия тела']],sets:3,reps:45,weight:0},
- {id:'lu',name:'Выпады',tag:'СИЛА',phases:[['up','Стойка'],['down','Выпад вперёд'],['up','Возврат']],sets:3,reps:12,weight:0},
- {id:'cr',name:'Скручивания',tag:'КОР',phases:[['down','Лёжа, колени'],['up','Подъём корпуса'],['down','Фиксация']],sets:3,reps:20,weight:0}
+ {id:'sq',name:'Приседания',tag:'СИЛА',ph:['Полная стойка','Присед до параллели','Возврат в стойку'],sets:3,reps:15,weight:0},
+ {id:'pu',name:'Отжимания',tag:'СИЛА',ph:['Упор лёжа','Спуск к полу','Отжим вверх'],sets:3,reps:12,weight:0},
+ {id:'pl',name:'Планка',tag:'КОР',ph:['Упор на локтях','Удержание','Линия тела'],sets:3,reps:45,weight:0},
+ {id:'lu',name:'Выпады',tag:'СИЛА',ph:['Стойка','Выпад вперёд','Возврат'],sets:3,reps:12,weight:0},
+ {id:'cr',name:'Скручивания',tag:'КОР',ph:['Лёжа на спине','Подъём корпуса','Фиксация'],sets:3,reps:20,weight:0}
 ];
 
 function loadPrefs(){try{return JSON.parse(localStorage.getItem('fit_prefs')||'{}')}catch(e){return{}}}
 function savePrefs(p){localStorage.setItem('fit_prefs',JSON.stringify(p))}
-
-function generate(){
-  hap('medium');
-  document.getElementById('intro').classList.add('hidden');
-  document.getElementById('loader').classList.remove('hidden');
-  setTimeout(()=>{
-    document.getElementById('loader').classList.add('hidden');
-    document.getElementById('program').classList.remove('hidden');
-    render();hap('success');
-  },1000);
-}
-
+function generate(){hap('medium');document.getElementById('intro').classList.add('hidden');document.getElementById('loader').classList.remove('hidden');setTimeout(()=>{document.getElementById('loader').classList.add('hidden');document.getElementById('program').classList.remove('hidden');render();hap('success');},900);}
 function render(){
   const prefs=loadPrefs();
   document.getElementById('exList').innerHTML=exercises.map(e=>{
     const v=prefs[e.id]||{sets:e.sets,reps:e.reps,weight:e.weight};
     const unit=e.id==='pl'?'сек':'повт';
-    return `<div class="ex">
-      <div class="ex-head"><div class="ex-name">${e.name}</div><div class="ex-tag">${e.tag}</div></div>
-      <div class="stages">${e.phases.map((p,i)=>`<div class="stage"><div class="lbl">STAGE ${i+1}</div>${pose(p[0])}<div class="desc">${p[1]}</div></div>`).join('')}</div>
+    return `<div class="ex"><div class="ex-head"><div class="ex-name">${e.name}</div><div class="ex-tag">${e.tag}</div></div>
+      <div class="stages">${e.ph.map((p,i)=>`<div class="stage"><div class="lbl">STAGE ${i+1}</div>${fig(e.name,i)}<div class="desc">${p}</div></div>`).join('')}</div>
       <div class="steppers">
         <div class="stp"><div class="k">Подходы</div><div class="v">${v.sets}</div><div class="r"><button onclick="chg('${e.id}','sets',-1)">−</button><button onclick="chg('${e.id}','sets',1)">+</button></div></div>
         <div class="stp"><div class="k">${unit==='сек'?'Секунд':'Повторы'}</div><div class="v">${v.reps}</div><div class="r"><button onclick="chg('${e.id}','reps',${unit==='сек'?15:-15})">−</button><button onclick="chg('${e.id}','reps',${unit==='сек'?15:1})">+</button></div></div>
         <div class="stp"><div class="k">Вес, кг</div><div class="v">${v.weight}</div><div class="r"><button onclick="chg('${e.id}','weight',-2.5)">−</button><button onclick="chg('${e.id}','weight',2.5)">+</button></div></div>
-      </div>
-    </div>`;
+      </div></div>`;
   }).join('');
 }
+function chg(id,key,delta){hap('light');const p=loadPrefs();const e=exercises.find(x=>x.id===id);const v=p[id]||{sets:e.sets,reps:e.reps,weight:e.weight};v[key]=Math.max(key==='weight'?0:1,v[key]+delta);p[id]=v;savePrefs(p);render();}
 
-function chg(id,key,delta){
-  hap('light');
-  const prefs=loadPrefs();
-  const e=exercises.find(x=>x.id===id);
-  const v=prefs[id]||{sets:e.sets,reps:e.reps,weight:e.weight};
-  v[key]=Math.max(key==='weight'?0:1,v[key]+delta);
-  prefs[id]=v;savePrefs(prefs);render();
-}
+const quotes=[["Если ты не идёшь на зазор, которого нет — ты больше не гонщик.","Айртон Сенна"],["Победа — сумма маленьких усилий, повторяемых день за днём.","Дейв Рэтклифф"],["Чемпион тот, кто не сбрасывает газ, когда тяжело.","Льюис Хэмилтон"],["Дисциплина — мост между целью и результатом.","Джим Рон"],["Не считай дни. Делай так, чтобы дни считались.","Мохаммед Али"]];
+function finish(){hap('success');document.getElementById('program').classList.add('hidden');document.getElementById('motivation').classList.remove('hidden');const q=quotes[Math.floor(Math.random()*quotes.length)];document.getElementById('quoteText').textContent='«'+q[0]+'»';document.getElementById('quoteAuthor').textContent='— '+q[1];window.scrollTo({top:0,behavior:'smooth'});}
+function sendResult(){hap('success');logDay();tg.sendData('workout_completed');}
 
-const quotes=[
- ["Если ты больше не идёшь на зазор, которого нет — ты больше не гонщик.","Айртон Сенна"],
- ["Победа — это сумма маленьких усилий, повторяемых день за днём.","Дейв Рэтклифф"],
- ["Чемпионом становится не тот, кто быстрее на круге, а тот, кто не сбрасывает газ, когда тяжело.","Льюис Хэмилтон"],
- ["Дисциплина — мост между целью и результатом.","Джим Рон"],
- ["Не считай дни. Делай так, чтобы дни считались.","Мохаммед Али"]
-];
-
-function finish(){
-  hap('success');
-  document.getElementById('program').classList.add('hidden');
-  document.getElementById('motivation').classList.remove('hidden');
-  const q=quotes[Math.floor(Math.random()*quotes.length)];
-  document.getElementById('quoteText').textContent='«'+q[0]+'»';
-  document.getElementById('quoteAuthor').textContent='— '+q[1];
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function sendResult(){hap('medium');tg.sendData('workout_completed')}
-
+/* ===== Дыхание: шарик по треугольнику ===== */
+const tri=[[100,20],[30,150],[170,150]]; // вершины
+const phases=[{name:'Вдох',dur:4000},{name:'Пауза',dur:7000},{name:'Выдох',dur:8000}];
+let breathTimer=null;
 function startBreath(){
-  hap('medium');
-  const c=document.getElementById('breathCircle');
-  const steps=[{t:'Вдох',c:'inhale',d:4000},{t:'Задержка',c:'hold',d:7000},{t:'Выдох',c:'exhale',d:8000}];
-  let i=0;(function next(){const s=steps[i];c.innerText=s.t;c.className='breath-circle '+s.c;i=(i+1)%steps.length;setTimeout(next,s.d)})();
+  hap('medium');if(breathTimer)clearTimeout(breathTimer);
+  const ball=document.getElementById('ball'),lab=document.getElementById('breathLabel'),cnt=document.getElementById('breathCount');
+  let side=0;
+  function runSide(){
+    const a=tri[side],b=tri[(side+1)%3],ph=phases[side];
+    lab.textContent=ph.name;const t0=performance.now();
+    function frame(now){
+      let t=(now-t0)/ph.dur;if(t>1)t=1;
+      ball.setAttribute('cx',a[0]+(b[0]-a[0])*t);ball.setAttribute('cy',a[1]+(b[1]-a[1])*t);
+      cnt.textContent=Math.ceil((ph.dur-(now-t0))/1000)+' с';
+      if(t<1)requestAnimationFrame(frame);else{side=(side+1)%3;breathTimer=setTimeout(runSide,0);}
+    }
+    requestAnimationFrame(frame);
+  }
+  runSide();
+}
+
+/* ===== Прогресс: кольца + график ===== */
+function getLog(){try{return JSON.parse(localStorage.getItem('fit_log')||'{}')}catch(e){return{}}}
+function setLog(l){localStorage.setItem('fit_log',JSON.stringify(l))}
+function logDay(){const l=getLog();const d=new Date().toISOString().slice(0,10);l[d]=(l[d]||0)+1;setLog(l);}
+function ring(cx,cy,r,pct,color){const c=2*Math.PI*r;return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="12"/><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="12" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-pct)}" transform="rotate(-90 ${cx} ${cy})"/>`;}
+function drawStats(){
+  const l=getLog();const days=Object.keys(l);
+  const total=days.reduce((s,d)=>s+l[d],0);
+  document.getElementById('r1').textContent=days.length;
+  document.getElementById('r2').textContent=total*5;
+  document.getElementById('r3').textContent=days.length;
+  const p1=Math.min(1,days.length/7),p2=Math.min(1,total/30),p3=Math.min(1,days.length/7);
+  document.getElementById('ringsSvg').innerHTML=ring(90,90,70,p1,'#e10600')+ring(90,90,52,p2,'#30d158')+ring(90,90,34,p3,'#00c7ff');
+  // график 7 дней
+  const svg=document.getElementById('chartSvg');const now=new Date();let bars='';
+  for(let i=6;i>=0;i--){const d=new Date(now);d.setDate(now.getDate()-i);const k=d.toISOString().slice(0,10);const v=l[k]||0;const h=Math.min(100,v*30);const x=10+(6-i)*42;bars+=`<rect x="${x}" y="${110-h}" width="30" height="${h}" rx="6" fill="${v?'#e10600':'rgba(255,255,255,.08)'}"/>`;bars+=`<text x="${x+15}" y="118" fill="#86868b" font-size="10" text-anchor="middle">${['вс','пн','вт','ср','чт','пт','сб'][d.getDay()]}</text>`;}
+  svg.innerHTML=bars;
 }
 </script>
 </body>
