@@ -6,197 +6,96 @@
 <title>FitCoach</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-html, body {
-  background:#000;
-  color:#f5f5f7;
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",sans-serif;
-  font-weight:400;
-  letter-spacing:-0.02em;
-  min-height:100vh;
-  padding-bottom:90px;
-  overflow-x:hidden;
-}
-h1 {
-  font-size:34px;
-  font-weight:700;
-  letter-spacing:-0.03em;
-  margin:24px 20px 8px;
-}
-.subtitle {
-  font-size:15px;
-  color:#86868b;
-  margin:0 20px 28px;
-  font-weight:400;
-}
-.section {
-  padding:0 20px;
-  margin-bottom:16px;
-}
-.card {
-  background:#1c1c1e;
-  border-radius:18px;
-  padding:22px;
-  border:1px solid rgba(255,255,255,0.06);
-}
-.card h2 {
-  font-size:13px;
-  text-transform:uppercase;
-  letter-spacing:0.08em;
-  color:#86868b;
-  font-weight:600;
-  margin-bottom:14px;
-}
-.card p {
-  font-size:17px;
-  line-height:1.45;
-  color:#f5f5f7;
-}
-.btn {
-  width:100%;
-  background:#e10600;
-  color:#fff;
-  border:none;
-  padding:16px;
-  border-radius:14px;
-  font-size:17px;
-  font-weight:600;
-  letter-spacing:-0.01em;
-  cursor:pointer;
-  margin-top:16px;
-  transition:opacity 0.2s ease;
-}
-.btn:active { opacity:0.7; }
-.btn.secondary {
-  background:transparent;
-  border:1px solid rgba(255,255,255,0.15);
-  color:#f5f5f7;
-}
-.btn.green { background:#30d158; }
-.big-number {
-  font-size:64px;
-  font-weight:700;
-  letter-spacing:-0.04em;
-  color:#f5f5f7;
-  line-height:1;
-}
-.big-number.accent { color:#e10600; }
-.label {
-  font-size:13px;
-  color:#86868b;
-  text-transform:uppercase;
-  letter-spacing:0.08em;
-  margin-top:8px;
-  font-weight:600;
-}
-.exercise {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:18px 0;
-  border-bottom:1px solid rgba(255,255,255,0.06);
-}
-.exercise:last-child { border-bottom:none; }
-.exercise-name { font-size:17px; font-weight:500; }
-.exercise-detail { font-size:15px; color:#86868b; font-weight:400; font-variant-numeric:tabular-nums; }
-.nav {
-  position:fixed;
-  bottom:0; left:0; right:0;
-  background:rgba(0,0,0,0.85);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-  border-top:1px solid rgba(255,255,255,0.08);
-  display:flex;
-  justify-content:space-around;
-  padding:10px 0 22px;
-  z-index:100;
-}
-.nav-btn {
-  background:none; border:none;
-  color:#86868b;
-  font-size:10px;
-  font-weight:500;
-  letter-spacing:0.02em;
-  display:flex; flex-direction:column; align-items:center; gap:4px;
-  cursor:pointer;
-  padding:4px 16px;
-  transition:color 0.2s ease;
-}
-.nav-btn.active { color:#f5f5f7; }
-.nav-icon { font-size:22px; line-height:1; }
-.tab { display:none; animation:fadeIn 0.25s ease; }
-.tab.active { display:block; }
-@keyframes fadeIn { from{opacity:0} to{opacity:1} }
-.divider {
-  height:1px;
-  background:rgba(255,255,255,0.08);
-  margin:20px 20px;
-}
-.stat-row {
-  display:flex;
-  justify-content:space-between;
-  padding:16px 0;
-  border-bottom:1px solid rgba(255,255,255,0.06);
-}
-.stat-row:last-child { border-bottom:none; }
-.stat-row .label { margin:0; }
-.loader {
-  width:32px; height:32px;
-  border:2px solid rgba(255,255,255,0.1);
-  border-top-color:#e10600;
-  border-radius:50%;
-  animation:spin 0.8s linear infinite;
-  margin:30px auto;
-}
-@keyframes spin { to{transform:rotate(360deg)} }
-.center { text-align:center; }
-.hidden { display:none !important; }
-.breath-circle {
-  width:200px; height:200px;
-  border-radius:50%;
-  background:radial-gradient(circle at 30% 30%, #ff3b30, #e10600);
-  margin:40px auto;
-  display:flex; align-items:center; justify-content:center;
-  font-size:18px; font-weight:500;
-  color:#fff;
-  transition:transform 4s cubic-bezier(0.4,0,0.2,1), opacity 4s ease;
-  box-shadow:0 0 60px rgba(225,6,0,0.3);
-}
-.breath-circle.inhale { transform:scale(1.4); opacity:0.85; }
-.breath-circle.hold { transform:scale(1.4); opacity:0.7; }
-.breath-circle.exhale { transform:scale(1); opacity:1; }
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{background:#000;color:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;letter-spacing:-0.02em;min-height:100vh;padding-bottom:90px;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;background:repeating-linear-gradient(115deg,transparent 0 60px,rgba(225,6,0,0.05) 60px 64px),repeating-linear-gradient(115deg,transparent 0 140px,rgba(225,6,0,0.08) 140px 142px);pointer-events:none;z-index:0}
+body::after{content:"01";position:fixed;top:-30px;right:-10px;font-size:220px;font-weight:800;color:rgba(255,255,255,0.03);letter-spacing:-0.06em;pointer-events:none;z-index:0}
+.trackline{position:fixed;top:0;left:0;right:0;height:2px;background:repeating-linear-gradient(90deg,#e10600 0 14px,transparent 14px 28px);opacity:.5;z-index:1}
+.wrap{position:relative;z-index:2}
+h1{font-size:32px;font-weight:700;letter-spacing:-0.03em;margin:26px 20px 6px}
+.subtitle{font-size:15px;color:#86868b;margin:0 20px 24px}
+.section{padding:0 20px;margin-bottom:14px}
+.card{background:#1c1c1e;border-radius:18px;padding:20px;border:1px solid rgba(255,255,255,.06)}
+.card h2{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:#86868b;font-weight:600;margin-bottom:12px}
+.btn{width:100%;background:#e10600;color:#fff;border:none;padding:16px;border-radius:14px;font-size:17px;font-weight:600;cursor:pointer;margin-top:14px;transition:opacity .2s}
+.btn:active{opacity:.65}
+.btn.green{background:#30d158;color:#000}
+.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.15);color:#f5f5f7}
+.ex{border-bottom:1px solid rgba(255,255,255,.07);padding:18px 0}
+.ex:last-child{border-bottom:none}
+.ex-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+.ex-name{font-size:19px;font-weight:600}
+.ex-tag{font-size:11px;color:#e10600;font-weight:700;letter-spacing:.08em}
+.stages{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
+.stage{background:#000;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px 6px;text-align:center}
+.stage .lbl{font-size:9px;color:#86868b;letter-spacing:.1em;font-weight:700;margin-bottom:6px}
+.stage svg{width:34px;height:44px;display:block;margin:0 auto 6px}
+.stage .desc{font-size:10px;color:#f5f5f7;line-height:1.25}
+.steppers{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.stp{background:#000;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px 4px;text-align:center}
+.stp .k{font-size:9px;color:#86868b;text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+.stp .v{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;margin:4px 0}
+.stp .r{display:flex;justify-content:center;gap:10px}
+.stp button{width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:transparent;color:#fff;font-size:16px;line-height:1;cursor:pointer}
+.stp button:active{background:#e10600;border-color:#e10600}
+.nav{position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-around;padding:10px 0 22px;z-index:100}
+.nav-btn{background:none;border:none;color:#86868b;font-size:10px;font-weight:500;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:4px 16px}
+.nav-btn.active{color:#f5f5f7}
+.nav-icon{font-size:20px;line-height:1}
+.tab{display:none;animation:fadeIn .25s ease}
+.tab.active{display:block}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.loader{width:32px;height:32px;border:2px solid rgba(255,255,255,.1);border-top-color:#e10600;border-radius:50%;animation:spin .8s linear infinite;margin:30px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.center{text-align:center;color:#86868b;font-size:14px}
+.hidden{display:none!important}
+.quote{font-size:26px;font-weight:700;line-height:1.3;letter-spacing:-0.03em;margin:20px 0 14px}
+.quote-author{font-size:13px;color:#e10600;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.big-number{font-size:60px;font-weight:700;letter-spacing:-0.04em;line-height:1}
+.big-number.accent{color:#e10600}
+.label{font-size:12px;color:#86868b;text-transform:uppercase;letter-spacing:.08em;margin-top:8px;font-weight:600}
+.breath-circle{width:200px;height:200px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#ff3b30,#e10600);margin:40px auto;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:500;color:#fff;transition:transform 4s cubic-bezier(.4,0,.2,1),opacity 4s;box-shadow:0 0 60px rgba(225,6,0,.3)}
+.breath-circle.inhale{transform:scale(1.4);opacity:.85}
+.breath-circle.hold{transform:scale(1.4);opacity:.7}
+.breath-circle.exhale{transform:scale(1);opacity:1}
 </style>
 </head>
 <body>
+<div class="trackline"></div>
+<div class="wrap">
 
-<!-- Вкладка: Тренировка -->
 <div id="tab-workout" class="tab active">
   <h1>Тренировка</h1>
-  <p class="subtitle">Персональная программа на сегодня</p>
+  <p class="subtitle">Программа под твой профиль на сегодня</p>
 
   <div id="intro" class="section">
     <div class="card">
       <h2>Статус</h2>
-      <p>Готов начать. ИИ подберёт нагрузку под твой профиль.</p>
+      <p style="font-size:16px;line-height:1.45">Готов к старту. Настрой нагрузку под себя и фиксируй каждый подход.</p>
       <button class="btn" onclick="generate()">Создать программу</button>
     </div>
   </div>
 
   <div id="loader" class="section hidden">
     <div class="loader"></div>
-    <p class="center" style="color:#86868b;font-size:15px;">Генерация программы...</p>
+    <p class="center">Формирование программы...</p>
   </div>
 
   <div id="program" class="section hidden">
-    <div class="card">
-      <h2>Программа</h2>
-      <div id="exerciseList"></div>
-    </div>
+    <div class="card"><div id="exList"></div></div>
     <button class="btn green" onclick="finish()">Завершить тренировку</button>
+  </div>
+
+  <div id="motivation" class="section hidden">
+    <div class="card" style="text-align:center;padding:34px 22px">
+      <h2 style="margin-bottom:20px">Финиш прямой</h2>
+      <div class="quote" id="quoteText"></div>
+      <div class="quote-author" id="quoteAuthor"></div>
+      <button class="btn" style="margin-top:26px" onclick="sendResult()">Отправить результат</button>
+    </div>
   </div>
 </div>
 
-<!-- Вкладка: Дыхание -->
 <div id="tab-breath" class="tab">
   <h1>Дыхание</h1>
   <p class="subtitle">Техника 4-7-8 для восстановления</p>
@@ -206,99 +105,111 @@ h1 {
   </div>
 </div>
 
-<!-- Вкладка: Прогресс -->
 <div id="tab-stats" class="tab">
   <h1>Прогресс</h1>
   <p class="subtitle">Твоя статистика</p>
-  <div class="section">
-    <div class="card">
-      <div class="big-number accent" id="streakNum">0</div>
-      <div class="label">Дней подряд</div>
-    </div>
-  </div>
-  <div class="section">
-    <div class="card">
-      <div class="big-number" id="totalNum">0</div>
-      <div class="label">Всего тренировок</div>
-    </div>
-  </div>
+  <div class="section"><div class="card"><div class="big-number accent" id="streakNum">0</div><div class="label">Дней подряд</div></div></div>
+  <div class="section"><div class="card"><div class="big-number" id="totalNum">0</div><div class="label">Всего тренировок</div></div></div>
+</div>
+
 </div>
 
 <div class="nav">
-  <button class="nav-btn active" onclick="switchTab('workout',this)">
-    <span class="nav-icon">◉</span><span>Тренировка</span>
-  </button>
-  <button class="nav-btn" onclick="switchTab('breath',this)">
-    <span class="nav-icon">○</span><span>Дыхание</span>
-  </button>
-  <button class="nav-btn" onclick="switchTab('stats',this)">
-    <span class="nav-icon">▤</span><span>Прогресс</span>
-  </button>
+  <button class="nav-btn active" onclick="switchTab('workout',this)"><span class="nav-icon">◉</span><span>Тренировка</span></button>
+  <button class="nav-btn" onclick="switchTab('breath',this)"><span class="nav-icon">○</span><span>Дыхание</span></button>
+  <button class="nav-btn" onclick="switchTab('stats',this)"><span class="nav-icon">▤</span><span>Прогресс</span></button>
 </div>
 
 <script>
-const tg = window.Telegram.WebApp;
-tg.expand();
-tg.ready();
+const tg=window.Telegram.WebApp;tg.expand();tg.ready();
+function hap(t){try{tg.HapticFeedback.impactOccurred(t||'light')}catch(e){}}
 
-function haptic(type){ try{ tg.HapticFeedback.impactOccurred(type||'light'); }catch(e){} }
+function switchTab(id,b){hap('light');document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');b.classList.add('active')}
 
-function switchTab(id, btn){
-  haptic('light');
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('tab-'+id).classList.add('active');
-  btn.classList.add('active');
+/* SVG-силуэт по фазе */
+function pose(p){
+  // p: 'up','down','hold'
+  const lines={
+    up:'<line x1="17" y1="16" x2="17" y2="30" stroke="#fff" stroke-width="2"/><line x1="17" y1="20" x2="10" y2="26" stroke="#fff" stroke-width="2"/><line x1="17" y1="20" x2="24" y2="26" stroke="#fff" stroke-width="2"/><line x1="17" y1="30" x2="11" y2="42" stroke="#fff" stroke-width="2"/><line x1="17" y1="30" x2="23" y2="42" stroke="#fff" stroke-width="2"/>',
+    down:'<line x1="17" y1="24" x2="17" y2="32" stroke="#fff" stroke-width="2"/><line x1="17" y1="26" x2="9" y2="30" stroke="#fff" stroke-width="2"/><line x1="17" y1="26" x2="25" y2="30" stroke="#fff" stroke-width="2"/><line x1="17" y1="32" x2="11" y2="40" stroke="#fff" stroke-width="2"/><line x1="17" y1="32" x2="23" y2="40" stroke="#fff" stroke-width="2"/>',
+    hold:'<line x1="10" y1="26" x2="26" y2="26" stroke="#fff" stroke-width="2"/><line x1="10" y1="26" x2="8" y2="40" stroke="#fff" stroke-width="2"/><line x1="26" y1="26" x2="28" y2="40" stroke="#fff" stroke-width="2"/><line x1="10" y1="26" x2="10" y2="18" stroke="#fff" stroke-width="2"/><line x1="26" y1="26" x2="26" y2="18" stroke="#fff" stroke-width="2"/>'
+  };
+  return '<svg viewBox="0 0 34 44"><circle cx="17" cy="10" r="4" fill="none" stroke="#e10600" stroke-width="2"/>'+(lines[p]||lines.up)+'</svg>';
 }
 
-const exercises = [
-  {name:'Разминка', detail:'5 мин'},
-  {name:'Приседания', detail:'3 × 15'},
-  {name:'Отжимания', detail:'3 × 12'},
-  {name:'Планка', detail:'3 × 45 сек'},
-  {name:'Заминка', detail:'5 мин'}
+const exercises=[
+ {id:'sq',name:'Приседания',tag:'СИЛА',phases:[['up','Старт, стойка'],['down','Присед до параллели'],['up','Возврат в стойку']],sets:3,reps:15,weight:0},
+ {id:'pu',name:'Отжимания',tag:'СИЛА',phases:[['hold','Упор лёжа'],['down','Спуск к полу'],['hold','Отжимание вверх']],sets:3,reps:12,weight:0},
+ {id:'pl',name:'Планка',tag:'КОР',phases:[['hold','Упор на локтях'],['hold','Удержание'],['hold','Линия тела']],sets:3,reps:45,weight:0},
+ {id:'lu',name:'Выпады',tag:'СИЛА',phases:[['up','Стойка'],['down','Выпад вперёд'],['up','Возврат']],sets:3,reps:12,weight:0},
+ {id:'cr',name:'Скручивания',tag:'КОР',phases:[['down','Лёжа, колени'],['up','Подъём корпуса'],['down','Фиксация']],sets:3,reps:20,weight:0}
 ];
 
+function loadPrefs(){try{return JSON.parse(localStorage.getItem('fit_prefs')||'{}')}catch(e){return{}}}
+function savePrefs(p){localStorage.setItem('fit_prefs',JSON.stringify(p))}
+
 function generate(){
-  haptic('medium');
+  hap('medium');
   document.getElementById('intro').classList.add('hidden');
   document.getElementById('loader').classList.remove('hidden');
   setTimeout(()=>{
     document.getElementById('loader').classList.add('hidden');
     document.getElementById('program').classList.remove('hidden');
-    const list = document.getElementById('exerciseList');
-    list.innerHTML = exercises.map(e=>`
-      <div class="exercise">
-        <div class="exercise-name">${e.name}</div>
-        <div class="exercise-detail">${e.detail}</div>
-      </div>
-    `).join('');
-    haptic('success');
-  }, 1200);
+    render();hap('success');
+  },1000);
 }
+
+function render(){
+  const prefs=loadPrefs();
+  document.getElementById('exList').innerHTML=exercises.map(e=>{
+    const v=prefs[e.id]||{sets:e.sets,reps:e.reps,weight:e.weight};
+    const unit=e.id==='pl'?'сек':'повт';
+    return `<div class="ex">
+      <div class="ex-head"><div class="ex-name">${e.name}</div><div class="ex-tag">${e.tag}</div></div>
+      <div class="stages">${e.phases.map((p,i)=>`<div class="stage"><div class="lbl">STAGE ${i+1}</div>${pose(p[0])}<div class="desc">${p[1]}</div></div>`).join('')}</div>
+      <div class="steppers">
+        <div class="stp"><div class="k">Подходы</div><div class="v">${v.sets}</div><div class="r"><button onclick="chg('${e.id}','sets',-1)">−</button><button onclick="chg('${e.id}','sets',1)">+</button></div></div>
+        <div class="stp"><div class="k">${unit==='сек'?'Секунд':'Повторы'}</div><div class="v">${v.reps}</div><div class="r"><button onclick="chg('${e.id}','reps',${unit==='сек'?15:-15})">−</button><button onclick="chg('${e.id}','reps',${unit==='сек'?15:1})">+</button></div></div>
+        <div class="stp"><div class="k">Вес, кг</div><div class="v">${v.weight}</div><div class="r"><button onclick="chg('${e.id}','weight',-2.5)">−</button><button onclick="chg('${e.id}','weight',2.5)">+</button></div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function chg(id,key,delta){
+  hap('light');
+  const prefs=loadPrefs();
+  const e=exercises.find(x=>x.id===id);
+  const v=prefs[id]||{sets:e.sets,reps:e.reps,weight:e.weight};
+  v[key]=Math.max(key==='weight'?0:1,v[key]+delta);
+  prefs[id]=v;savePrefs(prefs);render();
+}
+
+const quotes=[
+ ["Если ты больше не идёшь на зазор, которого нет — ты больше не гонщик.","Айртон Сенна"],
+ ["Победа — это сумма маленьких усилий, повторяемых день за днём.","Дейв Рэтклифф"],
+ ["Чемпионом становится не тот, кто быстрее на круге, а тот, кто не сбрасывает газ, когда тяжело.","Льюис Хэмилтон"],
+ ["Дисциплина — мост между целью и результатом.","Джим Рон"],
+ ["Не считай дни. Делай так, чтобы дни считались.","Мохаммед Али"]
+];
 
 function finish(){
-  haptic('success');
-  tg.sendData('workout_completed');
+  hap('success');
+  document.getElementById('program').classList.add('hidden');
+  document.getElementById('motivation').classList.remove('hidden');
+  const q=quotes[Math.floor(Math.random()*quotes.length)];
+  document.getElementById('quoteText').textContent='«'+q[0]+'»';
+  document.getElementById('quoteAuthor').textContent='— '+q[1];
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
+function sendResult(){hap('medium');tg.sendData('workout_completed')}
+
 function startBreath(){
-  haptic('medium');
-  const c = document.getElementById('breathCircle');
-  const steps = [
-    {text:'Вдох', cls:'inhale', d:4000},
-    {text:'Задержка', cls:'hold', d:7000},
-    {text:'Выдох', cls:'exhale', d:8000}
-  ];
-  let i=0;
-  function next(){
-    const s=steps[i];
-    c.innerText=s.text;
-    c.className='breath-circle '+s.cls;
-    i=(i+1)%steps.length;
-    setTimeout(next,s.d);
-  }
-  next();
+  hap('medium');
+  const c=document.getElementById('breathCircle');
+  const steps=[{t:'Вдох',c:'inhale',d:4000},{t:'Задержка',c:'hold',d:7000},{t:'Выдох',c:'exhale',d:8000}];
+  let i=0;(function next(){const s=steps[i];c.innerText=s.t;c.className='breath-circle '+s.c;i=(i+1)%steps.length;setTimeout(next,s.d)})();
 }
 </script>
 </body>
