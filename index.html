@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>FitCoach</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="quotes.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{background:#000;color:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;letter-spacing:-0.02em;min-height:100vh;padding-bottom:92px;overflow-x:hidden}
@@ -29,6 +30,7 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
 .last-session{font-size:12px;color:#86868b;margin-bottom:10px;padding:6px 10px;background:rgba(255,255,255,.04);border-radius:8px;border-left:2px solid #e10600}
 .last-session strong{color:#f5f5f7}
 .exercise-visual{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.exercise-visual.single{grid-template-columns:1fr;max-width:200px;margin-left:auto;margin-right:auto}
 .pose-card{background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;text-align:center}
 .pose-card img{width:100%;height:140px;object-fit:contain;background:#0a0a0a;display:block}
 .pose-label{font-size:11px;color:#86868b;text-transform:uppercase;letter-spacing:.08em;font-weight:600;padding:8px 0}
@@ -51,7 +53,7 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .center{text-align:center;color:#86868b;font-size:14px}
 .hidden{display:none!important}
-.quote{font-size:24px;font-weight:700;line-height:1.35;letter-spacing:-.03em;margin:20px 0 12px}
+.quote{font-size:22px;font-weight:700;line-height:1.4;letter-spacing:-.02em;margin:20px 0 12px}
 .quote-author{font-size:13px;color:#e10600;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
 #breathSvg{width:100%;max-width:320px;display:block;margin:10px auto}
 #breathLabel{text-align:center;font-size:22px;font-weight:700;letter-spacing:-.02em;margin-top:6px}
@@ -61,8 +63,6 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
 .ring-row .ri{text-align:center;font-size:12px;color:#86868b}
 .ring-row .rv{font-size:18px;font-weight:700;color:#f5f5f7}
 .chart-wrap{padding:6px 0}
-
-/* История тренировок */
 .history-card{background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px;margin-bottom:10px}
 .history-date{font-size:13px;color:#86868b;font-weight:600;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
 .history-date .num{color:#e10600;font-size:11px}
@@ -70,8 +70,6 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
 .history-ex .n{color:#f5f5f7}
 .history-ex .v{color:#86868b;font-variant-numeric:tabular-nums}
 .empty-history{text-align:center;color:#86868b;padding:30px 20px;font-size:14px}
-
-/* Рекомендации */
 .rec-box{border-radius:14px;padding:16px;margin-bottom:14px;border-left:4px solid}
 .rec-box.good{background:rgba(48,209,88,0.1);border-color:#30d158}
 .rec-box.warn{background:rgba(255,204,0,0.1);border-color:#ffcc00}
@@ -81,14 +79,15 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
 .rec-box.good .rec-title{color:#30d158}
 .rec-box.warn .rec-title{color:#ffcc00}
 .rec-box.danger .rec-title{color:#ff3b30}
-
+.cat-filter{display:flex;gap:8px;overflow-x:auto;padding:0 20px 14px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.cat-filter::-webkit-scrollbar{display:none}
+.cat-chip{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);color:#86868b;padding:8px 16px;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.cat-chip.active{background:#e10600;color:#fff;border-color:#e10600}
 .attribution{position:fixed;bottom:70px;right:10px;font-size:9px;color:rgba(255,255,255,.3);z-index:5;text-decoration:none}
 </style>
 </head>
 <body>
-
 <a class="attribution" href="https://repdb.co" rel="nofollow" target="_blank">Exercise data by RepDB</a>
-
 <div class="trackline"></div>
 <div class="wrap">
 
@@ -99,7 +98,7 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
     <div class="card">
       <h2>Статус</h2>
       <p style="font-size:16px;line-height:1.45">Готов к старту. Настрой нагрузку и выполняй по картинкам.</p>
-      <button class="btn" onclick="generate()">Создать программу</button>
+      <button class="btn" onclick="generate()">Создать тренировку на сегодня для тебя</button>
     </div>
   </div>
   <div id="loader" class="section hidden">
@@ -108,6 +107,7 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
   </div>
   <div id="program" class="section hidden">
     <div id="recBox"></div>
+    <div class="cat-filter" id="catFilter"></div>
     <div class="card"><div id="exList"></div></div>
     <button class="btn green" onclick="finish()">Завершить тренировку</button>
   </div>
@@ -140,32 +140,12 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
 <div id="tab-stats" class="tab">
   <h1>Прогресс</h1>
   <p class="subtitle">Активность за неделю</p>
-  <div class="section">
-    <div class="card">
-      <div class="rings">
-        <svg id="ringsSvg" width="180" height="180" viewBox="0 0 180 180"></svg>
-      </div>
-      <div class="ring-row">
-        <div class="ri">Тренировки<div class="rv" id="r1">0</div></div>
-        <div class="ri">Подходы<div class="rv" id="r2">0</div></div>
-        <div class="ri">Дыхание<div class="rv" id="r3">0</div></div>
-      </div>
-    </div>
-  </div>
-  <div class="section">
-    <div class="card">
-      <h2>Дни активности</h2>
-      <div class="chart-wrap">
-        <svg id="chartSvg" width="100%" height="120" viewBox="0 0 300 120"></svg>
-      </div>
-    </div>
-  </div>
-  <div class="section">
-    <div class="card">
-      <h2>История тренировок</h2>
-      <div id="historyList"></div>
-    </div>
-  </div>
+  <div class="section"><div class="card">
+    <div class="rings"><svg id="ringsSvg" width="180" height="180" viewBox="0 0 180 180"></svg></div>
+    <div class="ring-row"><div class="ri">Тренировки<div class="rv" id="r1">0</div></div><div class="ri">Подходы<div class="rv" id="r2">0</div></div><div class="ri">Дыхание<div class="rv" id="r3">0</div></div></div>
+  </div></div>
+  <div class="section"><div class="card"><h2>Дни активности</h2><div class="chart-wrap"><svg id="chartSvg" width="100%" height="120" viewBox="0 0 300 120"></svg></div></div></div>
+  <div class="section"><div class="card"><h2>История тренировок</h2><div id="historyList"></div></div></div>
 </div>
 
 </div>
@@ -179,70 +159,37 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
 <script>
 const tg=window.Telegram.WebApp;tg.expand();tg.ready();
 function hap(t){try{tg.HapticFeedback.impactOccurred(t||'light')}catch(e){}}
-function switchTab(id,b){
-  hap('light');
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));
-  document.getElementById('tab-'+id).classList.add('active');
-  b.classList.add('active');
-  if(id==='stats')drawStats();
-}
+function switchTab(id,b){hap('light');document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');b.classList.add('active');if(id==='stats')drawStats();}
 
-const exercises=[
-  {id:'sq',name:'Приседания',tag:'СИЛА',sets:3,reps:15,weight:0,start:'bodyweight-squat-start',peak:'bodyweight-squat-peak'},
-  {id:'pu',name:'Отжимания',tag:'СИЛА',sets:3,reps:12,weight:0,start:'push-up-start',peak:'push-up-peak'},
-  {id:'pl',name:'Планка',tag:'КОР',sets:3,reps:45,weight:0,start:'plank-start',peak:'plank-peak'},
-  {id:'lu',name:'Выпады',tag:'СИЛА',sets:3,reps:12,weight:0,start:'lunge-start',peak:'lunge-peak'},
-  {id:'cr',name:'Скручивания',tag:'КОР',sets:3,reps:20,weight:0,start:'crunch-start',peak:'crunch-peak'}
+const IMG='https://exercise-dataset.com/images/flat/';
+
+const allExercises=[
+  {id:'sq',name:'Приседания',cat:'НОГИ',tag:'СИЛА',sets:3,reps:15,weight:0,slug:'bodyweight-squat'},
+  {id:'lu',name:'Выпады',cat:'НОГИ',tag:'СИЛА',sets:3,reps:12,weight:0,slug:'lunge'},
+  {id:'gb',name:'Ягодичный мост',cat:'НОГИ',tag:'СИЛА',sets:3,reps:15,weight:0,slug:'glute-bridge'},
+  {id:'pu',name:'Отжимания',cat:'ГРУДЬ',tag:'СИЛА',sets:3,reps:12,weight:0,slug:'push-up'},
+  {id:'dp',name:'Дипы',cat:'ГРУДЬ',tag:'СИЛА',sets:3,reps:8,weight:0,slug:'assisted-dips'},
+  {id:'ap',name:'Отжимания лучник',cat:'ГРУДЬ',tag:'СИЛА',sets:3,reps:8,weight:0,slug:'archer-push-ups'},
+  {id:'pr',name:'Подтягивания',cat:'СПИНА',tag:'СИЛА',sets:3,reps:6,weight:0,slug:'assisted-pull-ups'},
+  {id:'br',name:'Тяга в наклоне',cat:'СПИНА',tag:'СИЛА',sets:3,reps:10,weight:10,slug:'barbell-row'},
+  {id:'sh',name:'Жим Арнольда',cat:'ПЛЕЧИ',tag:'СИЛА',sets:3,reps:10,weight:5,slug:'arnold-press'},
+  {id:'pl',name:'Планка',cat:'КОР',tag:'КОР',sets:3,reps:45,weight:0,slug:'plank'},
+  {id:'cr',name:'Скручивания',cat:'КОР',tag:'КОР',sets:3,reps:20,weight:0,slug:'abdominal-crunch'},
+  {id:'rt',name:'Русская скрутка',cat:'КОР',tag:'КОР',sets:3,reps:16,weight:0,slug:'russian-twist'},
+  {id:'bc',name:'Медвежий ход',cat:'КАРДИО',tag:'КАРДИО',sets:3,reps:20,weight:0,slug:'bear-crawl'},
+  {id:'mc',name:'Скалолаз',cat:'КАРДИО',tag:'КАРДИО',sets:3,reps:20,weight:0,slug:'mountain-climber'},
+  {id:'jj',name:'Джампинг Джек',cat:'КАРДИО',tag:'КАРДИО',sets:3,reps:30,weight:0,slug:'jumping-jack'}
 ];
 
-const IMG_BASE='https://exercise-dataset.com/images/flat/';
+let currentCat='ВСЕ';
 
 function loadPrefs(){try{return JSON.parse(localStorage.getItem('fit_prefs')||'{}')}catch(e){return{}}}
 function savePrefs(p){localStorage.setItem('fit_prefs',JSON.stringify(p))}
 function loadHistory(){try{return JSON.parse(localStorage.getItem('fit_history')||'[]')}catch(e){return[]}}
 function saveHistory(h){localStorage.setItem('fit_history',JSON.stringify(h))}
+function getLastSession(){const h=loadHistory();return h.length?h[h.length-1]:null}
 
-function getLastSession(){
-  const h=loadHistory();
-  return h.length?h[h.length-1]:null;
-}
-
-function getRecommendation(){
-  const h=loadHistory();
-  if(h.length<2)return null;
-  const last=h[h.length-1];
-  const prev=h[h.length-2];
-  const lastDate=new Date(last.date);
-  const prevDate=new Date(prev.date);
-  const daysDiff=(lastDate-prevDate)/(1000*60*60*24);
-  
-  let totalChange=0;
-  let count=0;
-  exercises.forEach(e=>{
-    const lv=last.exercises[e.id]||{sets:e.sets,reps:e.reps,weight:e.weight};
-    const pv=prev.exercises[e.id]||{sets:e.sets,reps:e.reps,weight:e.weight};
-    const lvTotal=lv.sets*lv.reps*(lv.weight||1);
-    const pvTotal=pv.sets*pv.reps*(pv.weight||1);
-    if(pvTotal>0){
-      const change=(lvTotal-pvTotal)/pvTotal;
-      totalChange+=change;
-      count++;
-    }
-  });
-  
-  const avgChange=count>0?totalChange/count:0;
-  const weeklyChange=avgChange*(7/Math.max(daysDiff,1));
-  
-  if(weeklyChange>0.15){
-    return {type:'danger',title:'⚠️ Слишком быстрый прогресс',text:'Рост нагрузки более 15% в неделю повышает риск травмы. Рекомендую прибавлять не более 10% в неделю. Снизь вес или повторы на следующей тренировке.'};
-  }else if(weeklyChange<-0.05){
-    return {type:'warn',title:'📉 Пора добавить нагрузку',text:'Последние 2+ недели без роста. Мышцы адаптировались. Попробуй добавить 1-2 повтора или +2.5 кг к весу.'};
-  }else if(weeklyChange>=0.03 && weeklyChange<=0.1){
-    return {type:'good',title:'🔥 Отличный темп!',text:'Рост 3-10% в неделю — это идеальная зона для прогресса без риска травм. Продолжай в том же духе!'};
-  }
-  return null;
-}
+function getImgUrl(slug,type){return IMG+slug+'-'+type+'.webp'}
 
 function generate(){
   hap('medium');
@@ -251,44 +198,73 @@ function generate(){
   setTimeout(()=>{
     document.getElementById('loader').classList.add('hidden');
     document.getElementById('program').classList.remove('hidden');
+    renderCats();
     renderRecs();
     render();
     hap('success');
   },900);
 }
 
+function renderCats(){
+  const cats=['ВСЕ',...new Set(allExercises.map(e=>e.cat))];
+  document.getElementById('catFilter').innerHTML=cats.map(c=>
+    `<button class="cat-chip${c===currentCat?' active':''}" onclick="setCat('${c}')">${c}</button>`
+  ).join('');
+}
+
+function setCat(c){currentCat=c;hap('light');renderCats();render()}
+
+function getRecommendation(){
+  const h=loadHistory();
+  if(h.length<2)return null;
+  const last=h[h.length-1],prev=h[h.length-2];
+  const daysDiff=Math.max(1,(new Date(last.date)-new Date(prev.date))/(1000*60*60*24));
+  let totalChange=0,count=0;
+  allExercises.forEach(e=>{
+    const lv=last.exercises[e.id]||{sets:e.sets,reps:e.reps,weight:e.weight};
+    const pv=prev.exercises[e.id]||{sets:e.sets,reps:e.reps,weight:e.weight};
+    const lvT=lv.sets*lv.reps*(lv.weight||1);
+    const pvT=pv.sets*pv.reps*(pv.weight||1);
+    if(pvT>0){totalChange+=(lvT-pvT)/pvT;count++}
+  });
+  const wk=count>0?(totalChange/count)*(7/daysDiff):0;
+  if(wk>0.15)return{type:'danger',title:'⚠️ Слишком быстрый прогресс',text:'Рост нагрузки >15% в неделю — риск травмы. Добавляй не более 10% в неделю.'};
+  if(wk<-0.05)return{type:'warn',title:'📉 Пора добавить нагрузку',text:'2+ недели без роста. Мышцы адаптировались. Добавь 1-2 повтора или +2.5 кг.'};
+  if(wk>=0.03&&wk<=0.1)return{type:'good',title:'🔥 Отличный темп!',text:'Рост 3-10% в неделю — идеальная зона прогресса без риска травм.'};
+  return null;
+}
+
 function renderRecs(){
   const rec=getRecommendation();
   const box=document.getElementById('recBox');
-  if(!rec){box.innerHTML='';return;}
+  if(!rec){box.innerHTML='';return}
   box.innerHTML=`<div class="rec-box ${rec.type}"><div class="rec-title">${rec.title}</div><div class="rec-text">${rec.text}</div></div>`;
 }
 
 function render(){
   const prefs=loadPrefs();
   const last=getLastSession();
-  document.getElementById('exList').innerHTML=exercises.map(e=>{
+  const filtered=currentCat==='ВСЕ'?allExercises:allExercises.filter(e=>e.cat===currentCat);
+  document.getElementById('exList').innerHTML=filtered.map(e=>{
     const v=prefs[e.id]||{sets:e.sets,reps:e.reps,weight:e.weight};
     const unit=e.id==='pl'?'сек':'повт';
     let lastInfo='';
-    if(last && last.exercises[e.id]){
+    if(last&&last.exercises[e.id]){
       const lv=last.exercises[e.id];
-      const lUnit=e.id==='pl'?'сек':'повт';
-      lastInfo=`<div class="last-session">Прошлый раз: <strong>${lv.sets}×${lv.reps} ${lUnit}</strong>${lv.weight?', '+lv.weight+' кг':''}</div>`;
+      lastInfo=`<div class="last-session">Прошлый раз: <strong>${lv.sets}×${lv.reps} ${unit}</strong>${lv.weight?', '+lv.weight+' кг':''}</div>`;
     }
-    return `<div class="ex">
-      <div class="ex-head"><div class="ex-name">${e.name}</div><div class="ex-tag">${e.tag}</div></div>
-      ${lastInfo}
-      <div class="exercise-visual">
-        <div class="pose-card">
-          <img src="${IMG_BASE}${e.start}.webp" alt="Старт" onerror="this.style.display='none'">
-          <div class="pose-label active">СТАРТ</div>
-        </div>
-        <div class="pose-card">
-          <img src="${IMG_BASE}${e.peak}.webp" alt="Пик" onerror="this.style.display='none'">
-          <div class="pose-label">ПИК</div>
-        </div>
-      </div>
+    const isStatic=['pl','bc'].includes(e.id);
+    let visualHtml;
+    if(isStatic){
+      visualHtml=`<div class="exercise-visual single"><div class="pose-card"><img src="${getImgUrl(e.slug,'main')}" onerror="this.parentElement.parentElement.style.display='none'"><div class="pose-label active">ПОЗИЦИЯ</div></div></div>`;
+    }else{
+      visualHtml=`<div class="exercise-visual">
+        <div class="pose-card"><img src="${getImgUrl(e.slug,'start')}" onerror="this.src='${getImgUrl(e.slug,'main')}'"><div class="pose-label active">СТАРТ</div></div>
+        <div class="pose-card"><img src="${getImgUrl(e.slug,'peak')}" onerror="this.src='${getImgUrl(e.slug,'main')}'"><div class="pose-label">ПИК</div></div>
+      </div>`;
+    }
+    return `<div class="ex"><div class="ex-head"><div class="ex-name">${e.name}</div><div class="ex-tag">${e.tag}</div></div>
+      ${lastInfo}${visualHtml}
       <div class="steppers">
         <div class="stp"><div class="k">Подходы</div><div class="v">${v.sets}</div><div class="r"><button onclick="chg('${e.id}','sets',-1)">−</button><button onclick="chg('${e.id}','sets',1)">+</button></div></div>
         <div class="stp"><div class="k">${unit==='сек'?'Секунд':'Повторы'}</div><div class="v">${v.reps}</div><div class="r"><button onclick="chg('${e.id}','reps',${unit==='сек'?15:-15})">−</button><button onclick="chg('${e.id}','reps',${unit==='сек'?15:1})">+</button></div></div>
@@ -302,47 +278,31 @@ function render(){
 function loadLast(id){
   hap('medium');
   const last=getLastSession();
-  if(!last || !last.exercises[id])return;
+  if(!last||!last.exercises[id])return;
   const lv=last.exercises[id];
   const prefs=loadPrefs();
   prefs[id]={sets:lv.sets,reps:lv.reps,weight:lv.weight};
-  savePrefs(prefs);
-  render();
+  savePrefs(prefs);render();
 }
 
 function chg(id,key,delta){
   hap('light');
   const p=loadPrefs();
-  const e=exercises.find(x=>x.id===id);
+  const e=allExercises.find(x=>x.id===id);
   const v=p[id]||{sets:e.sets,reps:e.reps,weight:e.weight};
   v[key]=Math.max(key==='weight'?0:1,v[key]+delta);
-  p[id]=v;
-  savePrefs(p);
-  render();
+  p[id]=v;savePrefs(p);render();
 }
-
-const quotes=[
-  ["Если ты не идёшь на зазор, которого нет — ты больше не гонщик.","Айртон Сенна"],
-  ["Победа — сумма маленьких усилий, повторяемых день за днём.","Дейв Рэтклифф"],
-  ["Чемпион тот, кто не сбрасывает газ, когда тяжело.","Льюис Хэмилтон"],
-  ["Дисциплина — мост между целью и результатом.","Джим Рон"],
-  ["Не считай дни. Делай так, чтобы дни считались.","Мохаммед Али"]
-];
 
 function finish(){
   hap('success');
-  // Сохраняем текущие настройки в историю
   const prefs=loadPrefs();
   const history=loadHistory();
   const today=new Date().toISOString().slice(0,10);
-  // Если сегодня уже была тренировка — обновляем, иначе добавляем
   const existingIdx=history.findIndex(h=>h.date===today);
   const session={date:today,exercises:{}};
-  exercises.forEach(e=>{
-    session.exercises[e.id]=prefs[e.id]||{sets:e.sets,reps:e.reps,weight:e.weight};
-  });
-  if(existingIdx>=0){history[existingIdx]=session;}
-  else{history.push(session);}
+  allExercises.forEach(e=>{session.exercises[e.id]=prefs[e.id]||{sets:e.sets,reps:e.reps,weight:e.weight};});
+  if(existingIdx>=0){history[existingIdx]=session;}else{history.push(session);}
   saveHistory(history);
   
   document.getElementById('program').classList.add('hidden');
@@ -411,7 +371,6 @@ function drawStats(){
   }
   svg.innerHTML=bars;
   
-  // История тренировок
   const history=loadHistory();
   const histBox=document.getElementById('historyList');
   if(history.length===0){
@@ -422,9 +381,8 @@ function drawStats(){
   histBox.innerHTML=reversed.map((h,idx)=>{
     const dateObj=new Date(h.date);
     const dateStr=dateObj.toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
-    const exHtml=exercises.map(e=>{
+    const exHtml=allExercises.filter(e=>h.exercises[e.id]).map(e=>{
       const v=h.exercises[e.id];
-      if(!v)return '';
       const unit=e.id==='pl'?'сек':'повт';
       return `<div class="history-ex"><span class="n">${e.name}</span><span class="v">${v.sets}×${v.reps} ${unit}${v.weight?', '+v.weight+' кг':''}</span></div>`;
     }).join('');
