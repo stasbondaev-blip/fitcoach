@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Анимации упражнений</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;color:#fff;font-family:-apple-system,sans-serif;padding:20px}
+h1{text-align:center;margin-bottom:30px;color:#e10600}
+.exercise{background:#1c1c1e;border-radius:18px;padding:20px;margin-bottom:20px;border:1px solid rgba(255,255,255,.1)}
+.exercise h2{font-size:18px;margin-bottom:15px;color:#f5f5f7}
+.anim-container{background:#000;border-radius:14px;height:200px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.anim-container svg{height:180px;width:auto}
+
+/* Приседания */
+@keyframes squat{0%,100%{transform:translateY(0)}50%{transform:translateY(40px)}}
+@keyframes squatTorso{0%,100%{transform:rotate(0)}50%{transform:rotate(-15deg)}}
+.squat-body{animation:squat 2.5s ease-in-out infinite}
+.squat-torso{animation:squatTorso 2.5s ease-in-out infinite;transform-origin:25px 35px}
+
+/* Отжимания */
+@keyframes pushup{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(25px) rotate(-8deg)}}
+.pushup-body{animation:pushup 2s ease-in-out infinite;transform-origin:30px 50px}
+
+/* Планка */
+@keyframes plank{0%,100%{transform:rotate(0)}50%{transform:rotate(3deg)}}
+.plank-body{animation:plank 3s ease-in-out infinite;transform-origin:20px 40px}
+
+/* Выпады */
+@keyframes lunge{0%,100%{transform:translateX(0) translateY(0)}50%{transform:translateX(30px) translateY(25px)}}
+.lunge-body{animation:lunge 2.5s ease-in-out infinite}
+
+/* Скручивания */
+@keyframes crunch{0%,100%{transform:rotate(0)}50%{transform:rotate(-40deg)}}
+.crunch-upper{animation:crunch 2s ease-in-out infinite;transform-origin:25px 45px}
+</style>
+</head>
+<body>
+
+<h1>🏋️ Превью анимаций</h1>
+
+<div class="exercise">
+  <h2>1. Приседания</h2>
+  <div class="anim-container">
+    <svg class="squat-body" viewBox="0 0 50 80">
+      <g class="squat-torso">
+        <circle cx="25" cy="10" r="6" fill="#e10600" stroke="#fff" stroke-width="2"/>
+        <line x1="25" y1="16" x2="25" y2="35" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+        <line x1="25" y1="20" x2="15" y2="28" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+        <line x1="25" y1="20" x2="35" y2="28" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="25" cy="20" r="3" fill="#e10600"/>
+        <circle cx="15" cy="28" r="3" fill="#e10600"/>
+        <circle cx="35" cy="28" r="3" fill="#e10600"/>
+      </g>
+      <g>
+        <line x1="25" y1="35" x2="18" y2="55" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+        <line x1="18" y1="55" x2="15" y2="72" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+        <line x1="25" y1="35" x2="32" y2="55" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+        <line x1="32" y1="55" x2="35" y2="72" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="25" cy="35" r="3" fill="#e10600"/>
+        <circle cx="18" cy="55" r="3" fill="#e10600"/>
+        <circle cx="32" cy="55" r="3" fill="#e10600"/>
+      </g>
+    </svg>
+  </div>
+</div>
+
+<div class="exercise">
+  <h2>2. Отжимания</h2>
+  <div class="anim-container">
+    <svg class="pushup-body" viewBox="0 0 60 60">
+      <circle cx="25" cy="10" r="6" fill="#e10600" stroke="#fff" stroke-width="2"/>
+      <line x1="15" y1="35" x2="45" y2="35" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <line x1="15" y1="35" x2="12" y2="50" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <line x1="45" y1="35" x2="48" y2="50" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <line x1="15" y1="35" x2="15" y2="28" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="15" cy="35" r="3" fill="#e10600"/>
+      <circle cx="45" cy="35" r="3" fill="#e10600"/>
+      <circle cx="12" cy="50" r="3" fill="#e10600"/>
+      <circle cx="48" cy="50" r="3" fill="#e10600"/>
+    </svg>
+  </div>
+</div>
+
+<div class="exercise">
+  <h2>3. Планка</h2>
+  <div class="anim-container">
+    <svg class="plank-body" viewBox="0 0 60 60">
+      <circle cx="10" cy="15" r="6" fill="#e10600" stroke="#fff" stroke-width="2"/>
+      <line x1="10" y1="35" x2="50" y2="35" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <line x1="10" y1="35" x2="10" y2="50" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <line x1="50" y1="35" x2="50" y2="50" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <line x1="10" y1="35" x2="15" y2="28" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="10" cy="35" r="3" fill="#e10600"/>
+      <circle cx="50" cy="35" r="3" fill="#e10600"/>
+      <circle cx="10" cy="50" r="3" fill="#e10600"/>
+      <circle cx="50" cy="50" r="3" fill="#e10600"/>
+    </svg>
+  </div>
+</div>
+
+<div class="exercise">
+  <h2>4. Выпады</h2>
+  <div class="anim-container">
+    <svg class="lunge-body" viewBox="0 0 50 80">
+      <circle cx="25" cy="10" r="6" fill="#e10600" stroke="#fff" stroke-width="2"/>
+      <line x1="25" y1="16" x2="25" y2="35" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <line x1="25" y1="20" x2="15" y2="28" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <line x1="25" y1="20" x2="35" y2="28" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="25" cy="20" r="3" fill="#e10600"/>
+      <circle cx="15" cy="28" r="3" fill="#e10600"/>
+      <circle cx="35" cy="28" r="3" fill="#e10600"/>
+      <line x1="25" y1="35" x2="15" y2="55" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <line x1="15" y1="55" x2="12" y2="72" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <line x1="25" y1="35" x2="35" y2="55" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <line x1="35" y1="55" x2="38" y2="72" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="25" cy="35" r="3" fill="#e10600"/>
+      <circle cx="15" cy="55" r="3" fill="#e10600"/>
+      <circle cx="35" cy="55" r="3" fill="#e10600"/>
+      <circle cx="12" cy="72" r="3" fill="#e10600"/>
+      <circle cx="38" cy="72" r="3" fill="#e10600"/>
+    </svg>
+  </div>
+</div>
+
+<div class="exercise">
+  <h2>5. Скручивания</h2>
+  <div class="anim-container">
+    <svg viewBox="0 0 50 60">
+      <circle cx="25" cy="10" r="6" fill="#e10600" stroke="#fff" stroke-width="2"/>
+      <line x1="10" y1="45" x2="40" y2="45" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <line x1="40" y1="45" x2="45" y2="40" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <line x1="10" y1="45" x2="10" y2="40" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="10" cy="45" r="3" fill="#e10600"/>
+      <circle cx="40" cy="45" r="3" fill="#e10600"/>
+      <circle cx="10" cy="40" r="3" fill="#e10600"/>
+      <circle cx="45" cy="40" r="3" fill="#e10600"/>
+      <g class="crunch-upper">
+        <line x1="25" y1="16" x2="25" y2="35" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+        <line x1="25" y1="20" x2="15" y2="28" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+        <line x1="25" y1="20" x2="35" y2="28" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="25" cy="20" r="3" fill="#e10600"/>
+        <circle cx="15" cy="28" r="3" fill="#e10600"/>
+        <circle cx="35" cy="28" r="3" fill="#e10600"/>
+      </g>
+    </svg>
+  </div>
+</div>
+
+</body>
+</html>
