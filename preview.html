@@ -10,58 +10,44 @@ body{background:#000;color:#fff;font-family:-apple-system,sans-serif;padding:20p
 h1{text-align:center;margin-bottom:30px;color:#e10600}
 .exercise{background:#1c1c1e;border-radius:18px;padding:20px;margin-bottom:20px;border:1px solid rgba(255,255,255,.1)}
 .exercise h2{font-size:18px;margin-bottom:15px;color:#f5f5f7}
-.anim-container{background:#000;border-radius:14px;height:200px;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.anim-container svg{height:180px;width:auto}
-
-/* Приседания */
-@keyframes squat{0%,100%{transform:translateY(0)}50%{transform:translateY(40px)}}
-@keyframes squatTorso{0%,100%{transform:rotate(0)}50%{transform:rotate(-15deg)}}
-.squat-body{animation:squat 2.5s ease-in-out infinite}
-.squat-torso{animation:squatTorso 2.5s ease-in-out infinite;transform-origin:25px 35px}
-
-/* Отжимания */
-@keyframes pushup{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(25px) rotate(-8deg)}}
-.pushup-body{animation:pushup 2s ease-in-out infinite;transform-origin:30px 50px}
-
-/* Планка */
-@keyframes plank{0%,100%{transform:rotate(0)}50%{transform:rotate(3deg)}}
-.plank-body{animation:plank 3s ease-in-out infinite;transform-origin:20px 40px}
-
-/* Выпады */
-@keyframes lunge{0%,100%{transform:translateX(0) translateY(0)}50%{transform:translateX(30px) translateY(25px)}}
-.lunge-body{animation:lunge 2.5s ease-in-out infinite}
-
-/* Скручивания */
-@keyframes crunch{0%,100%{transform:rotate(0)}50%{transform:rotate(-40deg)}}
-.crunch-upper{animation:crunch 2s ease-in-out infinite;transform-origin:25px 45px}
+.anim-container{background:#000;border-radius:14px;height:220px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.anim-container svg{height:200px;width:auto}
 </style>
 </head>
 <body>
 
-<h1>🏋️ Превью анимаций</h1>
+<h1>🏋️ Правильные анимации</h1>
 
 <div class="exercise">
   <h2>1. Приседания</h2>
   <div class="anim-container">
-    <svg class="squat-body" viewBox="0 0 50 80">
-      <g class="squat-torso">
-        <circle cx="25" cy="10" r="6" fill="#e10600" stroke="#fff" stroke-width="2"/>
-        <line x1="25" y1="16" x2="25" y2="35" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-        <line x1="25" y1="20" x2="15" y2="28" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-        <line x1="25" y1="20" x2="35" y2="28" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-        <circle cx="25" cy="20" r="3" fill="#e10600"/>
-        <circle cx="15" cy="28" r="3" fill="#e10600"/>
-        <circle cx="35" cy="28" r="3" fill="#e10600"/>
-      </g>
+    <svg viewBox="0 0 100 160">
+      <!-- Голова -->
+      <circle cx="50" cy="20" r="10" fill="#e10600" stroke="#fff" stroke-width="2"/>
+      <!-- Торс (наклоняется при приседе) -->
       <g>
-        <line x1="25" y1="35" x2="18" y2="55" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-        <line x1="18" y1="55" x2="15" y2="72" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-        <line x1="25" y1="35" x2="32" y2="55" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-        <line x1="32" y1="55" x2="35" y2="72" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-        <circle cx="25" cy="35" r="3" fill="#e10600"/>
-        <circle cx="18" cy="55" r="3" fill="#e10600"/>
-        <circle cx="32" cy="55" r="3" fill="#e10600"/>
+        <line x1="50" y1="30" x2="50" y2="70" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+        <animateTransform attributeName="transform" type="rotate" values="0 50 70; -15 50 70; 0 50 70" dur="2.5s" repeatCount="indefinite"/>
       </g>
+      <!-- Руки -->
+      <line x1="50" y1="40" x2="30" y2="55" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <line x1="50" y1="40" x2="70" y2="55" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <!-- Бёдра (опускаются) -->
+      <g>
+        <line x1="50" y1="70" x2="35" y2="100" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+        <line x1="50" y1="70" x2="65" y2="100" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+        <animateTransform attributeName="transform" type="translate" values="0 0; 0 20; 0 0" dur="2.5s" repeatCount="indefinite"/>
+      </g>
+      <!-- Голени (сгибаются в коленях) -->
+      <g>
+        <line x1="35" y1="100" x2="30" y2="140" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+        <line x1="65" y1="100" x2="70" y2="140" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+        <animateTransform attributeName="transform" type="translate" values="0 0; 5 20; 0 0" dur="2.5s" repeatCount="indefinite"/>
+      </g>
+      <!-- Суставы -->
+      <circle cx="50" cy="70" r="4" fill="#e10600"/>
+      <circle cx="35" cy="100" r="4" fill="#e10600"/>
+      <circle cx="65" cy="100" r="4" fill="#e10600"/>
     </svg>
   </div>
 </div>
@@ -69,16 +55,27 @@ h1{text-align:center;margin-bottom:30px;color:#e10600}
 <div class="exercise">
   <h2>2. Отжимания</h2>
   <div class="anim-container">
-    <svg class="pushup-body" viewBox="0 0 60 60">
-      <circle cx="25" cy="10" r="6" fill="#e10600" stroke="#fff" stroke-width="2"/>
-      <line x1="15" y1="35" x2="45" y2="35" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-      <line x1="15" y1="35" x2="12" y2="50" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-      <line x1="45" y1="35" x2="48" y2="50" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-      <line x1="15" y1="35" x2="15" y2="28" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-      <circle cx="15" cy="35" r="3" fill="#e10600"/>
-      <circle cx="45" cy="35" r="3" fill="#e10600"/>
-      <circle cx="12" cy="50" r="3" fill="#e10600"/>
-      <circle cx="48" cy="50" r="3" fill="#e10600"/>
+    <svg viewBox="0 0 120 80">
+      <!-- Голова -->
+      <circle cx="20" cy="25" r="8" fill="#e10600" stroke="#fff" stroke-width="2"/>
+      <!-- Корпус (опускается) -->
+      <g>
+        <line x1="25" y1="30" x2="95" y2="30" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+        <animateTransform attributeName="transform" type="translate" values="0 0; 0 15; 0 0" dur="2s" repeatCount="indefinite"/>
+      </g>
+      <!-- Руки (сгибаются в локтях) -->
+      <g>
+        <line x1="35" y1="30" x2="35" y2="55" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+        <line x1="85" y1="30" x2="85" y2="55" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+        <animateTransform attributeName="transform" type="translate" values="0 0; 0 15; 0 0" dur="2s" repeatCount="indefinite"/>
+      </g>
+      <!-- Ноги (статичны) -->
+      <line x1="95" y1="30" x2="110" y2="55" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <!-- Суставы -->
+      <circle cx="35" cy="30" r="3" fill="#e10600"/>
+      <circle cx="85" cy="30" r="3" fill="#e10600"/>
+      <circle cx="35" cy="55" r="3" fill="#e10600"/>
+      <circle cx="85" cy="55" r="3" fill="#e10600"/>
     </svg>
   </div>
 </div>
@@ -86,16 +83,24 @@ h1{text-align:center;margin-bottom:30px;color:#e10600}
 <div class="exercise">
   <h2>3. Планка</h2>
   <div class="anim-container">
-    <svg class="plank-body" viewBox="0 0 60 60">
-      <circle cx="10" cy="15" r="6" fill="#e10600" stroke="#fff" stroke-width="2"/>
-      <line x1="10" y1="35" x2="50" y2="35" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-      <line x1="10" y1="35" x2="10" y2="50" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-      <line x1="50" y1="35" x2="50" y2="50" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-      <line x1="10" y1="35" x2="15" y2="28" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-      <circle cx="10" cy="35" r="3" fill="#e10600"/>
-      <circle cx="50" cy="35" r="3" fill="#e10600"/>
-      <circle cx="10" cy="50" r="3" fill="#e10600"/>
-      <circle cx="50" cy="50" r="3" fill="#e10600"/>
+    <svg viewBox="0 0 120 80">
+      <!-- Голова -->
+      <circle cx="15" cy="20" r="8" fill="#e10600" stroke="#fff" stroke-width="2"/>
+      <!-- Корпус (лёгкое покачивание) -->
+      <g>
+        <line x1="20" y1="25" x2="100" y2="25" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+        <animateTransform attributeName="transform" type="rotate" values="0 60 25; 2 60 25; 0 60 25; -2 60 25; 0 60 25" dur="3s" repeatCount="indefinite"/>
+      </g>
+      <!-- Руки (упор на локтях) -->
+      <line x1="25" y1="25" x2="25" y2="50" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <line x1="95" y1="25" x2="95" y2="50" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <!-- Ноги -->
+      <line x1="100" y1="25" x2="110" y2="50" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <!-- Суставы -->
+      <circle cx="25" cy="25" r="3" fill="#e10600"/>
+      <circle cx="95" cy="25" r="3" fill="#e10600"/>
+      <circle cx="25" cy="50" r="3" fill="#e10600"/>
+      <circle cx="95" cy="50" r="3" fill="#e10600"/>
     </svg>
   </div>
 </div>
@@ -103,47 +108,53 @@ h1{text-align:center;margin-bottom:30px;color:#e10600}
 <div class="exercise">
   <h2>4. Выпады</h2>
   <div class="anim-container">
-    <svg class="lunge-body" viewBox="0 0 50 80">
-      <circle cx="25" cy="10" r="6" fill="#e10600" stroke="#fff" stroke-width="2"/>
-      <line x1="25" y1="16" x2="25" y2="35" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-      <line x1="25" y1="20" x2="15" y2="28" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-      <line x1="25" y1="20" x2="35" y2="28" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-      <circle cx="25" cy="20" r="3" fill="#e10600"/>
-      <circle cx="15" cy="28" r="3" fill="#e10600"/>
-      <circle cx="35" cy="28" r="3" fill="#e10600"/>
-      <line x1="25" y1="35" x2="15" y2="55" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-      <line x1="15" y1="55" x2="12" y2="72" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-      <line x1="25" y1="35" x2="35" y2="55" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-      <line x1="35" y1="55" x2="38" y2="72" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-      <circle cx="25" cy="35" r="3" fill="#e10600"/>
-      <circle cx="15" cy="55" r="3" fill="#e10600"/>
-      <circle cx="35" cy="55" r="3" fill="#e10600"/>
-      <circle cx="12" cy="72" r="3" fill="#e10600"/>
-      <circle cx="38" cy="72" r="3" fill="#e10600"/>
+    <svg viewBox="0 0 100 160">
+      <!-- Голова -->
+      <circle cx="50" cy="20" r="10" fill="#e10600" stroke="#fff" stroke-width="2"/>
+      <!-- Торс -->
+      <line x1="50" y1="30" x2="50" y2="70" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+      <!-- Руки -->
+      <line x1="50" y1="40" x2="30" y2="55" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <line x1="50" y1="40" x2="70" y2="55" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <!-- Передняя нога (выпад вперёд) -->
+      <g>
+        <line x1="50" y1="70" x2="30" y2="100" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+        <line x1="30" y1="100" x2="25" y2="140" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+        <animateTransform attributeName="transform" type="translate" values="0 0; 15 20; 0 0" dur="2.5s" repeatCount="indefinite"/>
+      </g>
+      <!-- Задняя нога (отводится назад) -->
+      <g>
+        <line x1="50" y1="70" x2="70" y2="100" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+        <line x1="70" y1="100" x2="75" y2="140" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+        <animateTransform attributeName="transform" type="translate" values="0 0; -10 10; 0 0" dur="2.5s" repeatCount="indefinite"/>
+      </g>
+      <!-- Суставы -->
+      <circle cx="50" cy="70" r="4" fill="#e10600"/>
+      <circle cx="30" cy="100" r="4" fill="#e10600"/>
+      <circle cx="70" cy="100" r="4" fill="#e10600"/>
     </svg>
   </div>
 </div>
 
 <div class="exercise">
-  <h2>5. Скручивания</h2>
+  <h2>5. Скручивания (пресс)</h2>
   <div class="anim-container">
-    <svg viewBox="0 0 50 60">
-      <circle cx="25" cy="10" r="6" fill="#e10600" stroke="#fff" stroke-width="2"/>
-      <line x1="10" y1="45" x2="40" y2="45" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-      <line x1="40" y1="45" x2="45" y2="40" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-      <line x1="10" y1="45" x2="10" y2="40" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-      <circle cx="10" cy="45" r="3" fill="#e10600"/>
-      <circle cx="40" cy="45" r="3" fill="#e10600"/>
-      <circle cx="10" cy="40" r="3" fill="#e10600"/>
-      <circle cx="45" cy="40" r="3" fill="#e10600"/>
-      <g class="crunch-upper">
-        <line x1="25" y1="16" x2="25" y2="35" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-        <line x1="25" y1="20" x2="15" y2="28" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-        <line x1="25" y1="20" x2="35" y2="28" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-        <circle cx="25" cy="20" r="3" fill="#e10600"/>
-        <circle cx="15" cy="28" r="3" fill="#e10600"/>
-        <circle cx="35" cy="28" r="3" fill="#e10600"/>
+    <svg viewBox="0 0 100 80">
+      <!-- Ноги (согнуты, статичны) -->
+      <line x1="70" y1="60" x2="85" y2="50" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+      <line x1="85" y1="50" x2="90" y2="60" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+      <!-- Таз (статичен) -->
+      <line x1="50" y1="60" x2="70" y2="60" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+      <!-- Верхняя часть корпуса (поднимается) -->
+      <g>
+        <line x1="50" y1="60" x2="30" y2="40" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+        <line x1="30" y1="40" x2="20" y2="30" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="20" cy="25" r="8" fill="#e10600" stroke="#fff" stroke-width="2"/>
+        <animateTransform attributeName="transform" type="rotate" values="0 50 60; -30 50 60; 0 50 60" dur="2s" repeatCount="indefinite"/>
       </g>
+      <!-- Суставы -->
+      <circle cx="50" cy="60" r="3" fill="#e10600"/>
+      <circle cx="70" cy="60" r="3" fill="#e10600"/>
     </svg>
   </div>
 </div>
