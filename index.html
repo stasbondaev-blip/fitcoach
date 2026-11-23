@@ -46,8 +46,38 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
 .ex{border-bottom:1px solid rgba(255,255,255,.07);padding:18px 0}.ex:last-child{border-bottom:none}
 .ex-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
 .ex-name{font-size:19px;font-weight:600}.ex-tag{font-size:11px;color:#e10600;font-weight:700;letter-spacing:.08em}
-.anim-box{background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:20px;margin-bottom:14px;display:flex;justify-content:center;align-items:center;height:200px;position:relative;overflow:hidden}
-.anim-box svg{height:180px;width:auto}
+
+/* Карточки с картинками упражнений */
+.exercise-visual{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-bottom:14px;
+}
+.pose-card{
+  background:rgba(0,0,0,0.6);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:14px;
+  overflow:hidden;
+  text-align:center;
+}
+.pose-card img{
+  width:100%;
+  height:140px;
+  object-fit:contain;
+  background:#0a0a0a;
+  display:block;
+}
+.pose-label{
+  font-size:11px;
+  color:#86868b;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-weight:600;
+  padding:8px 0;
+}
+.pose-label.active{color:#e10600}
+
 .steppers{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 .stp{background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px 4px;text-align:center}
 .stp .k{font-size:9px;color:#86868b;text-transform:uppercase;letter-spacing:.08em;font-weight:600}
@@ -73,29 +103,19 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
 .ring-row .ri{text-align:center;font-size:12px;color:#86868b}
 .ring-row .rv{font-size:18px;font-weight:700;color:#f5f5f7}
 .chart-wrap{padding:6px 0}
-
-@keyframes squat{0%,100%{transform:translateY(0)}50%{transform:translateY(35px)}}
-.squat-anim{animation:squat 2.5s ease-in-out infinite}
-.squat-anim .torso{transform-origin:25px 35px;animation:squat-torso 2.5s ease-in-out infinite}
-@keyframes squat-torso{0%,100%{transform:rotate(0)}50%{transform:rotate(-12deg)}}
-@keyframes pushup{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(20px) rotate(-5deg)}}
-.pushup-anim{animation:pushup 2s ease-in-out infinite;transform-origin:30px 50px}
-@keyframes plank{0%,100%{transform:rotate(0)}50%{transform:rotate(2deg)}}
-.plank-anim{animation:plank 3s ease-in-out infinite;transform-origin:20px 40px}
-@keyframes lunge{0%,100%{transform:translateX(0) translateY(0)}50%{transform:translateX(25px) translateY(20px)}}
-.lunge-anim{animation:lunge 2.5s ease-in-out infinite}
-@keyframes crunch{0%,100%{transform:rotate(0)}50%{transform:rotate(-35deg)}}
-.crunch-anim .upper{animation:crunch 2s ease-in-out infinite;transform-origin:25px 45px}
+.attribution{position:fixed;bottom:70px;right:10px;font-size:9px;color:rgba(255,255,255,.3);z-index:5;text-decoration:none}
 </style>
 </head>
 <body>
+
+<a class="attribution" href="https://repdb.co" rel="nofollow" target="_blank">Exercise data by RepDB</a>
 
 <div class="trackline"></div>
 <div class="wrap">
 
 <div id="tab-workout" class="tab active">
   <h1>Тренировка</h1><p class="subtitle">Программа под твой профиль на сегодня</p>
-  <div id="intro" class="section"><div class="card"><h2>Статус</h2><p style="font-size:16px;line-height:1.45">Готов к старту. Настрой нагрузку и повторяй за анимацией.</p><button class="btn" onclick="generate()">Создать программу</button></div></div>
+  <div id="intro" class="section"><div class="card"><h2>Статус</h2><p style="font-size:16px;line-height:1.45">Готов к старту. Настрой нагрузку и выполняй по картинкам.</p><button class="btn" onclick="generate()">Создать программу</button></div></div>
   <div id="loader" class="section hidden"><div class="loader"></div><p class="center">Формирование программы...</p></div>
   <div id="program" class="section hidden"><div class="card"><div id="exList"></div></div><button class="btn green" onclick="finish()">Завершить тренировку</button></div>
   <div id="motivation" class="section hidden"><div class="card" style="text-align:center;padding:34px 22px"><h2 style="margin-bottom:20px">Финиш прямой</h2><div class="quote" id="quoteText"></div><div class="quote-author" id="quoteAuthor"></div><button class="btn" style="margin-top:26px" onclick="sendResult()">Отправить результат</button></div></div>
@@ -135,38 +155,133 @@ const tg=window.Telegram.WebApp;tg.expand();tg.ready();
 function hap(t){try{tg.HapticFeedback.impactOccurred(t||'light')}catch(e){}}
 function switchTab(id,b){hap('light');document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');b.classList.add('active');if(id==='stats')drawStats();}
 
-function avatar(name){
-  const head='<circle cx="25" cy="10" r="6" fill="#e10600" stroke="#fff" stroke-width="2"/>';
-  const L=(x1,y1,x2,y2,w=3)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#fff" stroke-width="${w}" stroke-linecap="round"/>`;
-  const J=(x,y,r=3)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="#e10600" stroke="#fff" stroke-width="1.5"/>`;
-  if(name==='Приседания'){return `<svg class="squat-anim" viewBox="0 0 50 80"><g class="torso">${head}${L(25,16,25,35)}${L(25,20,15,28)}${L(25,20,35,28)}${J(25,20)}${J(15,28)}${J(35,28)}</g><g class="legs">${L(25,35,18,55)}${L(18,55,15,72)}${L(25,35,32,55)}${L(32,55,35,72)}${J(25,35)}${J(18,55)}${J(32,55)}</g></svg>`;}
-  else if(name==='Отжимания'){return `<svg class="pushup-anim" viewBox="0 0 60 60">${head}${L(15,35,45,35)}${L(15,35,12,50)}${L(45,35,48,50)}${L(15,35,15,28)}${J(15,35)}${J(45,35)}${J(12,50)}${J(48,50)}</svg>`;}
-  else if(name==='Планка'){return `<svg class="plank-anim" viewBox="0 0 60 60">${head}${L(10,35,50,35)}${L(10,35,10,50)}${L(50,35,50,50)}${L(10,35,15,28)}${J(10,35)}${J(50,35)}${J(10,50)}${J(50,50)}</svg>`;}
-  else if(name==='Выпады'){return `<svg class="lunge-anim" viewBox="0 0 50 80">${head}${L(25,16,25,35)}${L(25,20,15,28)}${L(25,20,35,28)}${J(25,20)}${J(15,28)}${J(35,28)}${L(25,35,15,55)}${L(15,55,12,72)}${L(25,35,35,55)}${L(35,55,38,72)}${J(25,35)}${J(15,55)}${J(35,55)}${J(12,72)}${J(38,72)}</svg>`;}
-  else{return `<svg class="crunch-anim" viewBox="0 0 50 60">${head}${L(10,45,40,45)}${L(40,45,45,40)}${L(10,45,10,40)}${J(10,45)}${J(40,45)}${J(10,40)}${J(45,40)}<g class="upper">${L(25,16,25,35)}${L(25,20,15,28)}${L(25,20,35,28)}${J(25,20)}${J(15,28)}${J(35,28)}</g></svg>`;}
-}
+// База упражнений с картинками из RepDB
+const exercises=[
+  {id:'sq',name:'Приседания',tag:'СИЛА',sets:3,reps:15,weight:0,start:'bodyweight-squat-start',peak:'bodyweight-squat-peak'},
+  {id:'pu',name:'Отжимания',tag:'СИЛА',sets:3,reps:12,weight:0,start:'push-up-start',peak:'push-up-peak'},
+  {id:'pl',name:'Планка',tag:'КОР',sets:3,reps:45,weight:0,start:'plank-start',peak:'plank-peak'},
+  {id:'lu',name:'Выпады',tag:'СИЛА',sets:3,reps:12,weight:0,start:'lunge-start',peak:'lunge-peak'},
+  {id:'cr',name:'Скручивания',tag:'КОР',sets:3,reps:20,weight:0,start:'crunch-start',peak:'crunch-peak'}
+];
 
-const exercises=[{id:'sq',name:'Приседания',tag:'СИЛА',sets:3,reps:15,weight:0},{id:'pu',name:'Отжимания',tag:'СИЛА',sets:3,reps:12,weight:0},{id:'pl',name:'Планка',tag:'КОР',sets:3,reps:45,weight:0},{id:'lu',name:'Выпады',tag:'СИЛА',sets:3,reps:12,weight:0},{id:'cr',name:'Скручивания',tag:'КОР',sets:3,reps:20,weight:0}];
+const IMG_BASE='https://exercise-dataset.com/images/flat/';
+
 function loadPrefs(){try{return JSON.parse(localStorage.getItem('fit_prefs')||'{}')}catch(e){return{}}}
 function savePrefs(p){localStorage.setItem('fit_prefs',JSON.stringify(p))}
-function generate(){hap('medium');document.getElementById('intro').classList.add('hidden');document.getElementById('loader').classList.remove('hidden');setTimeout(()=>{document.getElementById('loader').classList.add('hidden');document.getElementById('program').classList.remove('hidden');render();hap('success');},900);}
-function render(){const prefs=loadPrefs();document.getElementById('exList').innerHTML=exercises.map(e=>{const v=prefs[e.id]||{sets:e.sets,reps:e.reps,weight:e.weight};const unit=e.id==='pl'?'сек':'повт';return `<div class="ex"><div class="ex-head"><div class="ex-name">${e.name}</div><div class="ex-tag">${e.tag}</div></div><div class="anim-box">${avatar(e.name)}</div><div class="steppers"><div class="stp"><div class="k">Подходы</div><div class="v">${v.sets}</div><div class="r"><button onclick="chg('${e.id}','sets',-1)">−</button><button onclick="chg('${e.id}','sets',1)">+</button></div></div><div class="stp"><div class="k">${unit==='сек'?'Секунд':'Повторы'}</div><div class="v">${v.reps}</div><div class="r"><button onclick="chg('${e.id}','reps',${unit==='сек'?15:-15})">−</button><button onclick="chg('${e.id}','reps',${unit==='сек'?15:1})">+</button></div></div><div class="stp"><div class="k">Вес, кг</div><div class="v">${v.weight}</div><div class="r"><button onclick="chg('${e.id}','weight',-2.5)">−</button><button onclick="chg('${e.id}','weight',2.5)">+</button></div></div></div></div>`;}).join('');}
-function chg(id,key,delta){hap('light');const p=loadPrefs();const e=exercises.find(x=>x.id===id);const v=p[id]||{sets:e.sets,reps:e.reps,weight:e.weight};v[key]=Math.max(key==='weight'?0:1,v[key]+delta);p[id]=v;savePrefs(p);render();}
 
-const quotes=[["Если ты не идёшь на зазор, которого нет — ты больше не гонщик.","Айртон Сенна"],["Победа — сумма маленьких усилий, повторяемых день за днём.","Дейв Рэтклифф"],["Чемпион тот, кто не сбрасывает газ, когда тяжело.","Льюис Хэмилтон"],["Дисциплина — мост между целью и результатом.","Джим Рон"],["Не считай дни. Делай так, чтобы дни считались.","Мохаммед Али"]];
-function finish(){hap('success');document.getElementById('program').classList.add('hidden');document.getElementById('motivation').classList.remove('hidden');const q=quotes[Math.floor(Math.random()*quotes.length)];document.getElementById('quoteText').textContent='«'+q[0]+'»';document.getElementById('quoteAuthor').textContent='— '+q[1];window.scrollTo({top:0,behavior:'smooth'});}
+function generate(){
+  hap('medium');
+  document.getElementById('intro').classList.add('hidden');
+  document.getElementById('loader').classList.remove('hidden');
+  setTimeout(()=>{
+    document.getElementById('loader').classList.add('hidden');
+    document.getElementById('program').classList.remove('hidden');
+    render();
+    hap('success');
+  },900);
+}
+
+function render(){
+  const prefs=loadPrefs();
+  document.getElementById('exList').innerHTML=exercises.map(e=>{
+    const v=prefs[e.id]||{sets:e.sets,reps:e.reps,weight:e.weight};
+    const unit=e.id==='pl'?'сек':'повт';
+    return `<div class="ex">
+      <div class="ex-head"><div class="ex-name">${e.name}</div><div class="ex-tag">${e.tag}</div></div>
+      <div class="exercise-visual">
+        <div class="pose-card">
+          <img src="${IMG_BASE}${e.start}.webp" alt="Старт" onerror="this.style.display='none'">
+          <div class="pose-label active">СТАРТ</div>
+        </div>
+        <div class="pose-card">
+          <img src="${IMG_BASE}${e.peak}.webp" alt="Пик" onerror="this.style.display='none'">
+          <div class="pose-label">ПИК</div>
+        </div>
+      </div>
+      <div class="steppers">
+        <div class="stp"><div class="k">Подходы</div><div class="v">${v.sets}</div><div class="r"><button onclick="chg('${e.id}','sets',-1)">−</button><button onclick="chg('${e.id}','sets',1)">+</button></div></div>
+        <div class="stp"><div class="k">${unit==='сек'?'Секунд':'Повторы'}</div><div class="v">${v.reps}</div><div class="r"><button onclick="chg('${e.id}','reps',${unit==='сек'?15:-15})">−</button><button onclick="chg('${e.id}','reps',${unit==='сек'?15:1})">+</button></div></div>
+        <div class="stp"><div class="k">Вес, кг</div><div class="v">${v.weight}</div><div class="r"><button onclick="chg('${e.id}','weight',-2.5)">−</button><button onclick="chg('${e.id}','weight',2.5)">+</button></div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function chg(id,key,delta){
+  hap('light');
+  const p=loadPrefs();
+  const e=exercises.find(x=>x.id===id);
+  const v=p[id]||{sets:e.sets,reps:e.reps,weight:e.weight};
+  v[key]=Math.max(key==='weight'?0:1,v[key]+delta);
+  p[id]=v;
+  savePrefs(p);
+  render();
+}
+
+const quotes=[
+  ["Если ты не идёшь на зазор, которого нет — ты больше не гонщик.","Айртон Сенна"],
+  ["Победа — сумма маленьких усилий, повторяемых день за днём.","Дейв Рэтклифф"],
+  ["Чемпион тот, кто не сбрасывает газ, когда тяжело.","Льюис Хэмилтон"],
+  ["Дисциплина — мост между целью и результатом.","Джим Рон"],
+  ["Не считай дни. Делай так, чтобы дни считались.","Мохаммед Али"]
+];
+
+function finish(){
+  hap('success');
+  document.getElementById('program').classList.add('hidden');
+  document.getElementById('motivation').classList.remove('hidden');
+  const q=quotes[Math.floor(Math.random()*quotes.length)];
+  document.getElementById('quoteText').textContent='«'+q[0]+'»';
+  document.getElementById('quoteAuthor').textContent='— '+q[1];
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
 function sendResult(){hap('success');logDay();tg.sendData('workout_completed');}
 
+// Дыхание
 const tri=[[100,20],[30,150],[170,150]];
 const phases=[{name:'Вдох',dur:4000},{name:'Пауза',dur:7000},{name:'Выдох',dur:8000}];
 let breathTimer=null;
-function startBreath(){hap('medium');if(breathTimer)clearTimeout(breathTimer);const ball=document.getElementById('ball'),lab=document.getElementById('breathLabel'),cnt=document.getElementById('breathCount');let side=0;function runSide(){const a=tri[side],b=tri[(side+1)%3],ph=phases[side];lab.textContent=ph.name;const t0=performance.now();function frame(now){let t=(now-t0)/ph.dur;if(t>1)t=1;ball.setAttribute('cx',a[0]+(b[0]-a[0])*t);ball.setAttribute('cy',a[1]+(b[1]-a[1])*t);cnt.textContent=Math.ceil((ph.dur-(now-t0))/1000)+' с';if(t<1)requestAnimationFrame(frame);else{side=(side+1)%3;breathTimer=setTimeout(runSide,0);}}requestAnimationFrame(frame);}runSide();}
+function startBreath(){
+  hap('medium');
+  if(breathTimer)clearTimeout(breathTimer);
+  const ball=document.getElementById('ball'),lab=document.getElementById('breathLabel'),cnt=document.getElementById('breathCount');
+  let side=0;
+  function runSide(){
+    const a=tri[side],b=tri[(side+1)%3],ph=phases[side];
+    lab.textContent=ph.name;
+    const t0=performance.now();
+    function frame(now){
+      let t=(now-t0)/ph.dur;
+      if(t>1)t=1;
+      ball.setAttribute('cx',a[0]+(b[0]-a[0])*t);
+      ball.setAttribute('cy',a[1]+(b[1]-a[1])*t);
+      cnt.textContent=Math.ceil((ph.dur-(now-t0))/1000)+' с';
+      if(t<1)requestAnimationFrame(frame);
+      else{side=(side+1)%3;breathTimer=setTimeout(runSide,0);}
+    }
+    requestAnimationFrame(frame);
+  }
+  runSide();
+}
 
+// Прогресс
 function getLog(){try{return JSON.parse(localStorage.getItem('fit_log')||'{}')}catch(e){return{}}}
 function setLog(l){localStorage.setItem('fit_log',JSON.stringify(l))}
 function logDay(){const l=getLog();const d=new Date().toISOString().slice(0,10);l[d]=(l[d]||0)+1;setLog(l);}
 function ring(cx,cy,r,pct,color){const c=2*Math.PI*r;return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="12"/><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="12" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-pct)}" transform="rotate(-90 ${cx} ${cy})"/>`;}
-function drawStats(){const l=getLog();const days=Object.keys(l);const total=days.reduce((s,d)=>s+l[d],0);document.getElementById('r1').textContent=days.length;document.getElementById('r2').textContent=total*5;document.getElementById('r3').textContent=days.length;const p1=Math.min(1,days.length/7),p2=Math.min(1,total/30),p3=Math.min(1,days.length/7);document.getElementById('ringsSvg').innerHTML=ring(90,90,70,p1,'#e10600')+ring(90,90,52,p2,'#30d158')+ring(90,90,34,p3,'#00c7ff');const svg=document.getElementById('chartSvg');const now=new Date();let bars='';for(let i=6;i>=0;i--){const d=new Date(now);d.setDate(now.getDate()-i);const k=d.toISOString().slice(0,10);const v=l[k]||0;const h=Math.min(100,v*30);const x=10+(6-i)*42;bars+=`<rect x="${x}" y="${110-h}" width="30" height="${h}" rx="6" fill="${v?'#e10600':'rgba(255,255,255,.08)'}"/>`;bars+=`<text x="${x+15}" y="118" fill="#86868b" font-size="10" text-anchor="middle">${['вс','пн','вт','ср','чт','пт','сб'][d.getDay()]}</text>`;}svg.innerHTML=bars;}
+function drawStats(){
+  const l=getLog();const days=Object.keys(l);
+  const total=days.reduce((s,d)=>s+l[d],0);
+  document.getElementById('r1').textContent=days.length;
+  document.getElementById('r2').textContent=total*5;
+  document.getElementById('r3').textContent=days.length;
+  const p1=Math.min(1,days.length/7),p2=Math.min(1,total/30),p3=Math.min(1,days.length/7);
+  document.getElementById('ringsSvg').innerHTML=ring(90,90,70,p1,'#e10600')+ring(90,90,52,p2,'#30d158')+ring(90,90,34,p3,'#00c7ff');
+  const svg=document.getElementById('chartSvg');const now=new Date();let bars='';
+  for(let i=6;i>=0;i--){const d=new Date(now);d.setDate(now.getDate()-i);const k=d.toISOString().slice(0,10);const v=l[k]||0;const h=Math.min(100,v*30);const x=10+(6-i)*42;bars+=`<rect x="${x}" y="${110-h}" width="30" height="${h}" rx="6" fill="${v?'#e10600':'rgba(255,255,255,.08)'}"/>`;bars+=`<text x="${x+15}" y="118" fill="#86868b" font-size="10" text-anchor="middle">${['вс','пн','вт','ср','чт','пт','сб'][d.getDay()]}</text>`;}
+  svg.innerHTML=bars;
+}
 </script>
 </body>
 </html>
