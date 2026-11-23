@@ -7,30 +7,55 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{background:#000;color:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;letter-spacing:-0.02em;min-height:100vh;padding-bottom:92px;overflow-x:hidden}
-#carbg{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);width:90vw;max-width:800px;opacity:.15;pointer-events:none;z-index:0}
-.trackline{position:fixed;top:0;left:0;right:0;height:2px;background:repeating-linear-gradient(90deg,#e10600 0 14px,transparent 14px 28px);opacity:.5;z-index:3}
+html,body{
+  background:#000;
+  color:#f5f5f7;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;
+  letter-spacing:-0.02em;
+  min-height:100vh;
+  padding-bottom:92px;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:url('https://stasbondaev-blip.github.io/fitcoach/qwen_image_1795081833042.jpg') center bottom/cover no-repeat;
+  opacity:.4;
+  filter:brightness(1.2) contrast(1.2) saturate(1.2);
+  z-index:0;
+  pointer-events:none;
+}
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.9) 100%);
+  z-index:1;
+  pointer-events:none;
+}
+.trackline{position:fixed;top:0;left:0;right:0;height:2px;background:repeating-linear-gradient(90deg,#e10600 0 14px,transparent 14px 28px);opacity:.6;z-index:3}
 .wrap{position:relative;z-index:2}
 h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
 .subtitle{font-size:15px;color:#86868b;margin:0 20px 24px}
 .section{padding:0 20px;margin-bottom:14px}
-.card{background:#1c1c1e;border-radius:18px;padding:20px;border:1px solid rgba(255,255,255,.06)}
+.card{background:rgba(28,28,30,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:18px;padding:20px;border:1px solid rgba(255,255,255,.08)}
 .card h2{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:#86868b;font-weight:600;margin-bottom:12px}
 .btn{width:100%;background:#e10600;color:#fff;border:none;padding:16px;border-radius:14px;font-size:17px;font-weight:600;cursor:pointer;margin-top:14px;transition:opacity .2s}
 .btn:active{opacity:.65}.btn.green{background:#30d158;color:#000}
 .ex{border-bottom:1px solid rgba(255,255,255,.07);padding:18px 0}.ex:last-child{border-bottom:none}
 .ex-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
 .ex-name{font-size:19px;font-weight:600}.ex-tag{font-size:11px;color:#e10600;font-weight:700;letter-spacing:.08em}
-.anim-box{background:#000;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:20px;margin-bottom:14px;display:flex;justify-content:center;align-items:center;height:200px;position:relative;overflow:hidden}
+.anim-box{background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:20px;margin-bottom:14px;display:flex;justify-content:center;align-items:center;height:200px;position:relative;overflow:hidden}
 .anim-box svg{height:180px;width:auto}
 .steppers{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-.stp{background:#000;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px 4px;text-align:center}
+.stp{background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px 4px;text-align:center}
 .stp .k{font-size:9px;color:#86868b;text-transform:uppercase;letter-spacing:.08em;font-weight:600}
 .stp .v{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;margin:4px 0}
 .stp .r{display:flex;justify-content:center;gap:10px}
 .stp button{width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:transparent;color:#fff;font-size:16px;cursor:pointer}
 .stp button:active{background:#e10600;border-color:#e10600}
-.nav{position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-around;padding:10px 0 22px;z-index:100}
+.nav{position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-around;padding:10px 0 22px;z-index:100}
 .nav-btn{background:none;border:none;color:#86868b;font-size:10px;font-weight:500;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:4px 16px}
 .nav-btn.active{color:#f5f5f7}.nav-icon{font-size:20px}
 .tab{display:none;animation:fadeIn .25s ease}.tab.active{display:block}
@@ -49,29 +74,21 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
 .ring-row .rv{font-size:18px;font-weight:700;color:#f5f5f7}
 .chart-wrap{padding:6px 0}
 
-/* ===== РЕАЛИСТИЧНЫЕ АНИМАЦИИ ===== */
 @keyframes squat{0%,100%{transform:translateY(0)}50%{transform:translateY(35px)}}
 .squat-anim{animation:squat 2.5s ease-in-out infinite}
 .squat-anim .torso{transform-origin:25px 35px;animation:squat-torso 2.5s ease-in-out infinite}
 @keyframes squat-torso{0%,100%{transform:rotate(0)}50%{transform:rotate(-12deg)}}
-
 @keyframes pushup{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(20px) rotate(-5deg)}}
 .pushup-anim{animation:pushup 2s ease-in-out infinite;transform-origin:30px 50px}
-
 @keyframes plank{0%,100%{transform:rotate(0)}50%{transform:rotate(2deg)}}
 .plank-anim{animation:plank 3s ease-in-out infinite;transform-origin:20px 40px}
-
 @keyframes lunge{0%,100%{transform:translateX(0) translateY(0)}50%{transform:translateX(25px) translateY(20px)}}
 .lunge-anim{animation:lunge 2.5s ease-in-out infinite}
-
 @keyframes crunch{0%,100%{transform:rotate(0)}50%{transform:rotate(-35deg)}}
 .crunch-anim .upper{animation:crunch 2s ease-in-out infinite;transform-origin:25px 45px}
 </style>
 </head>
 <body>
-
-<!-- Настоящий болид F1 из файла -->
-<img id="carbg" src="car.png" alt="F1 Car">
 
 <div class="trackline"></div>
 <div class="wrap">
@@ -122,57 +139,18 @@ function avatar(name){
   const head='<circle cx="25" cy="10" r="6" fill="#e10600" stroke="#fff" stroke-width="2"/>';
   const L=(x1,y1,x2,y2,w=3)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#fff" stroke-width="${w}" stroke-linecap="round"/>`;
   const J=(x,y,r=3)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="#e10600" stroke="#fff" stroke-width="1.5"/>`;
-  
-  if(name==='Приседания'){
-    return `<svg class="squat-anim" viewBox="0 0 50 80">
-      <g class="torso">${head}${L(25,16,25,35)}${L(25,20,15,28)}${L(25,20,35,28)}${J(25,20)}${J(15,28)}${J(35,28)}</g>
-      <g class="legs">${L(25,35,18,55)}${L(18,55,15,72)}${L(25,35,32,55)}${L(32,55,35,72)}${J(25,35)}${J(18,55)}${J(32,55)}</g>
-    </svg>`;
-  }else if(name==='Отжимания'){
-    return `<svg class="pushup-anim" viewBox="0 0 60 60">
-      ${head}${L(15,35,45,35)}${L(15,35,12,50)}${L(45,35,48,50)}${L(15,35,15,28)}${J(15,35)}${J(45,35)}${J(12,50)}${J(48,50)}
-    </svg>`;
-  }else if(name==='Планка'){
-    return `<svg class="plank-anim" viewBox="0 0 60 60">
-      ${head}${L(10,35,50,35)}${L(10,35,10,50)}${L(50,35,50,50)}${L(10,35,15,28)}${J(10,35)}${J(50,35)}${J(10,50)}${J(50,50)}
-    </svg>`;
-  }else if(name==='Выпады'){
-    return `<svg class="lunge-anim" viewBox="0 0 50 80">
-      ${head}${L(25,16,25,35)}${L(25,20,15,28)}${L(25,20,35,28)}${J(25,20)}${J(15,28)}${J(35,28)}${L(25,35,15,55)}${L(15,55,12,72)}${L(25,35,35,55)}${L(35,55,38,72)}${J(25,35)}${J(15,55)}${J(35,55)}${J(12,72)}${J(38,72)}
-    </svg>`;
-  }else{
-    return `<svg class="crunch-anim" viewBox="0 0 50 60">
-      ${head}${L(10,45,40,45)}${L(40,45,45,40)}${L(10,45,10,40)}${J(10,45)}${J(40,45)}${J(10,40)}${J(45,40)}
-      <g class="upper">${L(25,16,25,35)}${L(25,20,15,28)}${L(25,20,35,28)}${J(25,20)}${J(15,28)}${J(35,28)}</g>
-    </svg>`;
-  }
+  if(name==='Приседания'){return `<svg class="squat-anim" viewBox="0 0 50 80"><g class="torso">${head}${L(25,16,25,35)}${L(25,20,15,28)}${L(25,20,35,28)}${J(25,20)}${J(15,28)}${J(35,28)}</g><g class="legs">${L(25,35,18,55)}${L(18,55,15,72)}${L(25,35,32,55)}${L(32,55,35,72)}${J(25,35)}${J(18,55)}${J(32,55)}</g></svg>`;}
+  else if(name==='Отжимания'){return `<svg class="pushup-anim" viewBox="0 0 60 60">${head}${L(15,35,45,35)}${L(15,35,12,50)}${L(45,35,48,50)}${L(15,35,15,28)}${J(15,35)}${J(45,35)}${J(12,50)}${J(48,50)}</svg>`;}
+  else if(name==='Планка'){return `<svg class="plank-anim" viewBox="0 0 60 60">${head}${L(10,35,50,35)}${L(10,35,10,50)}${L(50,35,50,50)}${L(10,35,15,28)}${J(10,35)}${J(50,35)}${J(10,50)}${J(50,50)}</svg>`;}
+  else if(name==='Выпады'){return `<svg class="lunge-anim" viewBox="0 0 50 80">${head}${L(25,16,25,35)}${L(25,20,15,28)}${L(25,20,35,28)}${J(25,20)}${J(15,28)}${J(35,28)}${L(25,35,15,55)}${L(15,55,12,72)}${L(25,35,35,55)}${L(35,55,38,72)}${J(25,35)}${J(15,55)}${J(35,55)}${J(12,72)}${J(38,72)}</svg>`;}
+  else{return `<svg class="crunch-anim" viewBox="0 0 50 60">${head}${L(10,45,40,45)}${L(40,45,45,40)}${L(10,45,10,40)}${J(10,45)}${J(40,45)}${J(10,40)}${J(45,40)}<g class="upper">${L(25,16,25,35)}${L(25,20,15,28)}${L(25,20,35,28)}${J(25,20)}${J(15,28)}${J(35,28)}</g></svg>`;}
 }
 
-const exercises=[
- {id:'sq',name:'Приседания',tag:'СИЛА',sets:3,reps:15,weight:0},
- {id:'pu',name:'Отжимания',tag:'СИЛА',sets:3,reps:12,weight:0},
- {id:'pl',name:'Планка',tag:'КОР',sets:3,reps:45,weight:0},
- {id:'lu',name:'Выпады',tag:'СИЛА',sets:3,reps:12,weight:0},
- {id:'cr',name:'Скручивания',tag:'КОР',sets:3,reps:20,weight:0}
-];
-
+const exercises=[{id:'sq',name:'Приседания',tag:'СИЛА',sets:3,reps:15,weight:0},{id:'pu',name:'Отжимания',tag:'СИЛА',sets:3,reps:12,weight:0},{id:'pl',name:'Планка',tag:'КОР',sets:3,reps:45,weight:0},{id:'lu',name:'Выпады',tag:'СИЛА',sets:3,reps:12,weight:0},{id:'cr',name:'Скручивания',tag:'КОР',sets:3,reps:20,weight:0}];
 function loadPrefs(){try{return JSON.parse(localStorage.getItem('fit_prefs')||'{}')}catch(e){return{}}}
 function savePrefs(p){localStorage.setItem('fit_prefs',JSON.stringify(p))}
 function generate(){hap('medium');document.getElementById('intro').classList.add('hidden');document.getElementById('loader').classList.remove('hidden');setTimeout(()=>{document.getElementById('loader').classList.add('hidden');document.getElementById('program').classList.remove('hidden');render();hap('success');},900);}
-function render(){
-  const prefs=loadPrefs();
-  document.getElementById('exList').innerHTML=exercises.map(e=>{
-    const v=prefs[e.id]||{sets:e.sets,reps:e.reps,weight:e.weight};
-    const unit=e.id==='pl'?'сек':'повт';
-    return `<div class="ex"><div class="ex-head"><div class="ex-name">${e.name}</div><div class="ex-tag">${e.tag}</div></div>
-      <div class="anim-box">${avatar(e.name)}</div>
-      <div class="steppers">
-        <div class="stp"><div class="k">Подходы</div><div class="v">${v.sets}</div><div class="r"><button onclick="chg('${e.id}','sets',-1)">−</button><button onclick="chg('${e.id}','sets',1)">+</button></div></div>
-        <div class="stp"><div class="k">${unit==='сек'?'Секунд':'Повторы'}</div><div class="v">${v.reps}</div><div class="r"><button onclick="chg('${e.id}','reps',${unit==='сек'?15:-15})">−</button><button onclick="chg('${e.id}','reps',${unit==='сек'?15:1})">+</button></div></div>
-        <div class="stp"><div class="k">Вес, кг</div><div class="v">${v.weight}</div><div class="r"><button onclick="chg('${e.id}','weight',-2.5)">−</button><button onclick="chg('${e.id}','weight',2.5)">+</button></div></div>
-      </div></div>`;
-  }).join('');
-}
+function render(){const prefs=loadPrefs();document.getElementById('exList').innerHTML=exercises.map(e=>{const v=prefs[e.id]||{sets:e.sets,reps:e.reps,weight:e.weight};const unit=e.id==='pl'?'сек':'повт';return `<div class="ex"><div class="ex-head"><div class="ex-name">${e.name}</div><div class="ex-tag">${e.tag}</div></div><div class="anim-box">${avatar(e.name)}</div><div class="steppers"><div class="stp"><div class="k">Подходы</div><div class="v">${v.sets}</div><div class="r"><button onclick="chg('${e.id}','sets',-1)">−</button><button onclick="chg('${e.id}','sets',1)">+</button></div></div><div class="stp"><div class="k">${unit==='сек'?'Секунд':'Повторы'}</div><div class="v">${v.reps}</div><div class="r"><button onclick="chg('${e.id}','reps',${unit==='сек'?15:-15})">−</button><button onclick="chg('${e.id}','reps',${unit==='сек'?15:1})">+</button></div></div><div class="stp"><div class="k">Вес, кг</div><div class="v">${v.weight}</div><div class="r"><button onclick="chg('${e.id}','weight',-2.5)">−</button><button onclick="chg('${e.id}','weight',2.5)">+</button></div></div></div></div>`;}).join('');}
 function chg(id,key,delta){hap('light');const p=loadPrefs();const e=exercises.find(x=>x.id===id);const v=p[id]||{sets:e.sets,reps:e.reps,weight:e.weight};v[key]=Math.max(key==='weight'?0:1,v[key]+delta);p[id]=v;savePrefs(p);render();}
 
 const quotes=[["Если ты не идёшь на зазор, которого нет — ты больше не гонщик.","Айртон Сенна"],["Победа — сумма маленьких усилий, повторяемых день за днём.","Дейв Рэтклифф"],["Чемпион тот, кто не сбрасывает газ, когда тяжело.","Льюис Хэмилтон"],["Дисциплина — мост между целью и результатом.","Джим Рон"],["Не считай дни. Делай так, чтобы дни считались.","Мохаммед Али"]];
@@ -182,40 +160,13 @@ function sendResult(){hap('success');logDay();tg.sendData('workout_completed');}
 const tri=[[100,20],[30,150],[170,150]];
 const phases=[{name:'Вдох',dur:4000},{name:'Пауза',dur:7000},{name:'Выдох',dur:8000}];
 let breathTimer=null;
-function startBreath(){
-  hap('medium');if(breathTimer)clearTimeout(breathTimer);
-  const ball=document.getElementById('ball'),lab=document.getElementById('breathLabel'),cnt=document.getElementById('breathCount');
-  let side=0;
-  function runSide(){
-    const a=tri[side],b=tri[(side+1)%3],ph=phases[side];
-    lab.textContent=ph.name;const t0=performance.now();
-    function frame(now){
-      let t=(now-t0)/ph.dur;if(t>1)t=1;
-      ball.setAttribute('cx',a[0]+(b[0]-a[0])*t);ball.setAttribute('cy',a[1]+(b[1]-a[1])*t);
-      cnt.textContent=Math.ceil((ph.dur-(now-t0))/1000)+' с';
-      if(t<1)requestAnimationFrame(frame);else{side=(side+1)%3;breathTimer=setTimeout(runSide,0);}
-    }
-    requestAnimationFrame(frame);
-  }
-  runSide();
-}
+function startBreath(){hap('medium');if(breathTimer)clearTimeout(breathTimer);const ball=document.getElementById('ball'),lab=document.getElementById('breathLabel'),cnt=document.getElementById('breathCount');let side=0;function runSide(){const a=tri[side],b=tri[(side+1)%3],ph=phases[side];lab.textContent=ph.name;const t0=performance.now();function frame(now){let t=(now-t0)/ph.dur;if(t>1)t=1;ball.setAttribute('cx',a[0]+(b[0]-a[0])*t);ball.setAttribute('cy',a[1]+(b[1]-a[1])*t);cnt.textContent=Math.ceil((ph.dur-(now-t0))/1000)+' с';if(t<1)requestAnimationFrame(frame);else{side=(side+1)%3;breathTimer=setTimeout(runSide,0);}}requestAnimationFrame(frame);}runSide();}
 
 function getLog(){try{return JSON.parse(localStorage.getItem('fit_log')||'{}')}catch(e){return{}}}
 function setLog(l){localStorage.setItem('fit_log',JSON.stringify(l))}
 function logDay(){const l=getLog();const d=new Date().toISOString().slice(0,10);l[d]=(l[d]||0)+1;setLog(l);}
 function ring(cx,cy,r,pct,color){const c=2*Math.PI*r;return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="12"/><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="12" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-pct)}" transform="rotate(-90 ${cx} ${cy})"/>`;}
-function drawStats(){
-  const l=getLog();const days=Object.keys(l);
-  const total=days.reduce((s,d)=>s+l[d],0);
-  document.getElementById('r1').textContent=days.length;
-  document.getElementById('r2').textContent=total*5;
-  document.getElementById('r3').textContent=days.length;
-  const p1=Math.min(1,days.length/7),p2=Math.min(1,total/30),p3=Math.min(1,days.length/7);
-  document.getElementById('ringsSvg').innerHTML=ring(90,90,70,p1,'#e10600')+ring(90,90,52,p2,'#30d158')+ring(90,90,34,p3,'#00c7ff');
-  const svg=document.getElementById('chartSvg');const now=new Date();let bars='';
-  for(let i=6;i>=0;i--){const d=new Date(now);d.setDate(now.getDate()-i);const k=d.toISOString().slice(0,10);const v=l[k]||0;const h=Math.min(100,v*30);const x=10+(6-i)*42;bars+=`<rect x="${x}" y="${110-h}" width="30" height="${h}" rx="6" fill="${v?'#e10600':'rgba(255,255,255,.08)'}"/>`;bars+=`<text x="${x+15}" y="118" fill="#86868b" font-size="10" text-anchor="middle">${['вс','пн','вт','ср','чт','пт','сб'][d.getDay()]}</text>`;}
-  svg.innerHTML=bars;
-}
+function drawStats(){const l=getLog();const days=Object.keys(l);const total=days.reduce((s,d)=>s+l[d],0);document.getElementById('r1').textContent=days.length;document.getElementById('r2').textContent=total*5;document.getElementById('r3').textContent=days.length;const p1=Math.min(1,days.length/7),p2=Math.min(1,total/30),p3=Math.min(1,days.length/7);document.getElementById('ringsSvg').innerHTML=ring(90,90,70,p1,'#e10600')+ring(90,90,52,p2,'#30d158')+ring(90,90,34,p3,'#00c7ff');const svg=document.getElementById('chartSvg');const now=new Date();let bars='';for(let i=6;i>=0;i--){const d=new Date(now);d.setDate(now.getDate()-i);const k=d.toISOString().slice(0,10);const v=l[k]||0;const h=Math.min(100,v*30);const x=10+(6-i)*42;bars+=`<rect x="${x}" y="${110-h}" width="30" height="${h}" rx="6" fill="${v?'#e10600':'rgba(255,255,255,.08)'}"/>`;bars+=`<text x="${x+15}" y="118" fill="#86868b" font-size="10" text-anchor="middle">${['вс','пн','вт','ср','чт','пт','сб'][d.getDay()]}</text>`;}svg.innerHTML=bars;}
 </script>
 </body>
 </html>
