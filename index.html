@@ -22,6 +22,9 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
 .btn:active{opacity:.65}.btn.green{background:#30d158;color:#000}
 .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.15);color:#f5f5f7;font-size:14px;padding:10px;margin-top:8px}
 .btn.premium{background:linear-gradient(135deg,#e10600,#ff6b00);box-shadow:0 4px 20px rgba(225,6,0,0.4)}
+.btn.small{padding:8px 12px;font-size:12px;border-radius:10px;width:auto;margin-top:6px;margin-right:6px;display:inline-block}
+.btn.pyaterochka{background:#e30613}
+.btn.magnit{background:#00a651}
 .ex{border-bottom:1px solid rgba(255,255,255,.07);padding:18px 0}.ex:last-child{border-bottom:none}
 .ex-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
 .ex-name{font-size:19px;font-weight:600}.ex-tag{font-size:11px;color:#e10600;font-weight:700;letter-spacing:.08em}
@@ -112,11 +115,26 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
 .macro-card.protein .value{color:#e10600}
 .macro-card.fat .value{color:#ffcc00}
 .macro-card.carbs .value{color:#30d158}
-.food-list{margin-top:14px}
-.food-item{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}
-.food-item:last-child{border-bottom:none}
-.food-name{font-size:14px;color:#f5f5f7}
-.food-detail{font-size:13px;color:#86868b}
+
+/* Приёмы пищи */
+.meal-card{background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:18px;margin-bottom:14px}
+.meal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.meal-name{font-size:18px;font-weight:700}
+.meal-kcal{font-size:13px;color:#e10600;font-weight:600}
+.meal-macros{display:flex;gap:14px;font-size:12px;color:#86868b;margin-bottom:14px}
+.meal-macros span{display:flex;align-items:center;gap:4px}
+.meal-macros .dot{width:6px;height:6px;border-radius:50%;display:inline-block}
+.meal-macros .dot.p{background:#e10600}
+.meal-macros .dot.f{background:#ffcc00}
+.meal-macros .dot.c{background:#30d158}
+.ingredient{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.ingredient:last-child{border-bottom:none}
+.ingredient-info{flex:1}
+.ingredient-name{font-size:14px;color:#f5f5f7;font-weight:500}
+.ingredient-amount{font-size:12px;color:#86868b;margin-top:2px}
+.ingredient-actions{display:flex;gap:4px;flex-shrink:0}
+.copy-toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:#30d158;color:#000;padding:12px 24px;border-radius:12px;font-weight:600;font-size:14px;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none}
+.copy-toast.show{opacity:1}
 </style>
 </head>
 <body>
@@ -180,11 +198,14 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
 </div>
 
 <div id="tab-nutrition" class="tab">
-  <h1>Питание</h1><p class="subtitle">Твоя суточная норма</p>
+  <h1>Питание</h1><p class="subtitle">Меню на сегодня под твою цель</p>
   <div class="section"><div class="card">
-    <h2>Калории в день</h2>
-    <div style="text-align:center;margin:20px 0">
-      <div style="font-size:48px;font-weight:700;color:#e10600" id="dailyCalories">0</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <h2 style="margin:0">Суточная норма</h2>
+      <button class="btn small" onclick="regenerateMenu()" style="margin:0">🔄 Новое меню</button>
+    </div>
+    <div style="text-align:center;margin:10px 0">
+      <div style="font-size:42px;font-weight:700;color:#e10600" id="dailyCalories">0</div>
       <div style="font-size:13px;color:#86868b;margin-top:4px">ккал / день</div>
     </div>
     <div class="macro-row">
@@ -193,14 +214,10 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
       <div class="macro-card carbs"><div class="label">Углеводы</div><div class="value" id="carbsGrams">0г</div></div>
     </div>
   </div></div>
-  <div class="section"><div class="card">
-    <h2>Рекомендуемые продукты</h2>
-    <div class="food-list" id="foodList"></div>
-  </div></div>
-  <div class="section"><div class="card">
-    <h2>Советы по питанию</h2>
-    <div id="nutritionTips" style="font-size:14px;color:#86868b;line-height:1.5"></div>
-  </div></div>
+  <div class="section" id="mealsContainer"></div>
+  <div class="section">
+    <button class="btn" onclick="copyShoppingList()">📋 Скопировать список покупок</button>
+  </div>
 </div>
 
 <div id="tab-trainers" class="tab">
@@ -265,6 +282,8 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
   <button class="nav-btn" onclick="switchTab('stats',this)"><span class="nav-icon">▤</span><span>Прогресс</span></button>
 </div>
 
+<div class="copy-toast" id="copyToast">✓ Список скопирован</div>
+
 <script>
 const tg=window.Telegram.WebApp;tg.expand();tg.ready();
 function hap(t){try{tg.HapticFeedback.impactOccurred(t||'light')}catch(e){}}
@@ -295,6 +314,173 @@ const allExercises=[
   {id:'ab',name:'Велотренажёр Air Bike',cat:'КАРДИО',tag:'КАРДИО',sets:1,reps:15,weight:0,slug:'air-bike',t:'m',unit:'мин',met:8.0}
 ];
 
+// ===== БАЗА РЕЦЕПТОВ =====
+// Каждый рецепт: название, калории (базовые), БЖУ (базовые), ингредиенты с граммовками
+const recipes = {
+  breakfast: [
+    {
+      name: 'Овсянка с бананом и мёдом',
+      kcal: 320, protein: 10, fat: 6, carbs: 58,
+      ingredients: [
+        {name: 'Овсяные хлопья', amount: 60, unit: 'г', category: 'Крупы', search: 'овсяные хлопья'},
+        {name: 'Молоко 2.5%', amount: 150, unit: 'мл', category: 'Молочные', search: 'молоко 2.5'},
+        {name: 'Банан', amount: 100, unit: 'г', category: 'Фрукты', search: 'банан'},
+        {name: 'Мёд', amount: 15, unit: 'г', category: 'Сладкое', search: 'мёд'}
+      ]
+    },
+    {
+      name: 'Яичница с тостом и авокадо',
+      kcal: 380, protein: 22, fat: 24, carbs: 18,
+      ingredients: [
+        {name: 'Яйца куриные', amount: 2, unit: 'шт', category: 'Яйца', search: 'яйца куриные С1'},
+        {name: 'Хлеб цельнозерновой', amount: 60, unit: 'г', category: 'Хлеб', search: 'хлеб цельнозерновой'},
+        {name: 'Авокадо', amount: 50, unit: 'г', category: 'Овощи', search: 'авокадо'},
+        {name: 'Масло оливковое', amount: 5, unit: 'мл', category: 'Масла', search: 'масло оливковое'}
+      ]
+    },
+    {
+      name: 'Творог с ягодами и орехами',
+      kcal: 290, protein: 28, fat: 12, carbs: 18,
+      ingredients: [
+        {name: 'Творог 5%', amount: 180, unit: 'г', category: 'Молочные', search: 'творог 5%'},
+        {name: 'Ягоды (черника/малина)', amount: 80, unit: 'г', category: 'Ягоды', search: 'ягоды замороженные'},
+        {name: 'Миндаль', amount: 20, unit: 'г', category: 'Орехи', search: 'миндаль'}
+      ]
+    },
+    {
+      name: 'Гречка с молоком и яблоком',
+      kcal: 340, protein: 12, fat: 5, carbs: 62,
+      ingredients: [
+        {name: 'Гречка', amount: 70, unit: 'г', category: 'Крупы', search: 'гречка'},
+        {name: 'Молоко 2.5%', amount: 150, unit: 'мл', category: 'Молочные', search: 'молоко 2.5'},
+        {name: 'Яблоко', amount: 150, unit: 'г', category: 'Фрукты', search: 'яблоко'}
+      ]
+    }
+  ],
+  lunch: [
+    {
+      name: 'Куриная грудка с рисом и овощами',
+      kcal: 520, protein: 45, fat: 10, carbs: 58,
+      ingredients: [
+        {name: 'Куриное филе', amount: 160, unit: 'г', category: 'Мясо', search: 'куриное филе'},
+        {name: 'Рис бурый', amount: 80, unit: 'г', category: 'Крупы', search: 'рис бурый'},
+        {name: 'Овощи (брокколи/морковь)', amount: 150, unit: 'г', category: 'Овощи', search: 'брокколи'},
+        {name: 'Масло оливковое', amount: 10, unit: 'мл', category: 'Масла', search: 'масло оливковое'}
+      ]
+    },
+    {
+      name: 'Говядина с гречкой и салатом',
+      kcal: 580, protein: 42, fat: 18, carbs: 60,
+      ingredients: [
+        {name: 'Говядина (вырезка)', amount: 150, unit: 'г', category: 'Мясо', search: 'говядина вырезка'},
+        {name: 'Гречка', amount: 80, unit: 'г', category: 'Крупы', search: 'гречка'},
+        {name: 'Огурцы', amount: 100, unit: 'г', category: 'Овощи', search: 'огурцы'},
+        {name: 'Помидоры', amount: 100, unit: 'г', category: 'Овощи', search: 'помидоры'},
+        {name: 'Масло оливковое', amount: 10, unit: 'мл', category: 'Масла', search: 'масло оливковое'}
+      ]
+    },
+    {
+      name: 'Рыба (треска) с картофелем',
+      kcal: 490, protein: 38, fat: 8, carbs: 65,
+      ingredients: [
+        {name: 'Филе трески', amount: 170, unit: 'г', category: 'Рыба', search: 'филе трески'},
+        {name: 'Картофель', amount: 220, unit: 'г', category: 'Овощи', search: 'картофель'},
+        {name: 'Лимон', amount: 30, unit: 'г', category: 'Фрукты', search: 'лимон'},
+        {name: 'Масло оливковое', amount: 10, unit: 'мл', category: 'Масла', search: 'масло оливковое'}
+      ]
+    },
+    {
+      name: 'Курица с макаронами и томатным соусом',
+      kcal: 540, protein: 42, fat: 12, carbs: 62,
+      ingredients: [
+        {name: 'Куриное филе', amount: 150, unit: 'г', category: 'Мясо', search: 'куриное филе'},
+        {name: 'Макароны (твёрдые сорта)', amount: 80, unit: 'г', category: 'Крупы', search: 'макароны твердые сорта'},
+        {name: 'Томатная паста', amount: 40, unit: 'г', category: 'Соусы', search: 'томатная паста'},
+        {name: 'Чеснок', amount: 5, unit: 'г', category: 'Овощи', search: 'чеснок'}
+      ]
+    }
+  ],
+  snack: [
+    {
+      name: 'Яблоко с миндалём',
+      kcal: 210, protein: 6, fat: 12, carbs: 22,
+      ingredients: [
+        {name: 'Яблоко', amount: 200, unit: 'г', category: 'Фрукты', search: 'яблоко'},
+        {name: 'Миндаль', amount: 25, unit: 'г', category: 'Орехи', search: 'миндаль'}
+      ]
+    },
+    {
+      name: 'Йогурт с бананом',
+      kcal: 190, protein: 10, fat: 4, carbs: 30,
+      ingredients: [
+        {name: 'Йогурт натуральный', amount: 200, unit: 'г', category: 'Молочные', search: 'йогурт натуральный'},
+        {name: 'Банан', amount: 100, unit: 'г', category: 'Фрукты', search: 'банан'}
+      ]
+    },
+    {
+      name: 'Творог с мёдом',
+      kcal: 170, protein: 20, fat: 5, carbs: 12,
+      ingredients: [
+        {name: 'Творог 5%', amount: 150, unit: 'г', category: 'Молочные', search: 'творог 5%'},
+        {name: 'Мёд', amount: 15, unit: 'г', category: 'Сладкое', search: 'мёд'}
+      ]
+    },
+    {
+      name: 'Бутерброд с сыром и овощами',
+      kcal: 230, protein: 12, fat: 10, carbs: 24,
+      ingredients: [
+        {name: 'Хлеб цельнозерновой', amount: 60, unit: 'г', category: 'Хлеб', search: 'хлеб цельнозерновой'},
+        {name: 'Сыр твёрдый', amount: 30, unit: 'г', category: 'Молочные', search: 'сыр твёрдый'},
+        {name: 'Огурцы', amount: 50, unit: 'г', category: 'Овощи', search: 'огурцы'}
+      ]
+    }
+  ],
+  dinner: [
+    {
+      name: 'Запечённая рыба с овощами',
+      kcal: 410, protein: 38, fat: 18, carbs: 22,
+      ingredients: [
+        {name: 'Филе лосося/форели', amount: 160, unit: 'г', category: 'Рыба', search: 'филе лосося'},
+        {name: 'Кабачок', amount: 150, unit: 'г', category: 'Овощи', search: 'кабачок'},
+        {name: 'Помидоры черри', amount: 100, unit: 'г', category: 'Овощи', search: 'помидоры черри'},
+        {name: 'Масло оливковое', amount: 10, unit: 'мл', category: 'Масла', search: 'масло оливковое'}
+      ]
+    },
+    {
+      name: 'Куриная грудка с салатом',
+      kcal: 380, protein: 42, fat: 14, carbs: 18,
+      ingredients: [
+        {name: 'Куриное филе', amount: 160, unit: 'г', category: 'Мясо', search: 'куриное филе'},
+        {name: 'Листья салата', amount: 80, unit: 'г', category: 'Овощи', search: 'салат листовой'},
+        {name: 'Огурцы', amount: 100, unit: 'г', category: 'Овощи', search: 'огурцы'},
+        {name: 'Помидоры', amount: 100, unit: 'г', category: 'Овощи', search: 'помидоры'},
+        {name: 'Масло оливковое', amount: 10, unit: 'мл', category: 'Масла', search: 'масло оливковое'}
+      ]
+    },
+    {
+      name: 'Омлет с овощами и сыром',
+      kcal: 360, protein: 28, fat: 22, carbs: 12,
+      ingredients: [
+        {name: 'Яйца куриные', amount: 3, unit: 'шт', category: 'Яйца', search: 'яйца куриные С1'},
+        {name: 'Молоко 2.5%', amount: 50, unit: 'мл', category: 'Молочные', search: 'молоко 2.5'},
+        {name: 'Сыр твёрдый', amount: 30, unit: 'г', category: 'Молочные', search: 'сыр твёрдый'},
+        {name: 'Помидоры', amount: 80, unit: 'г', category: 'Овощи', search: 'помидоры'},
+        {name: 'Шпинат', amount: 50, unit: 'г', category: 'Овощи', search: 'шпинат'}
+      ]
+    },
+    {
+      name: 'Творог с овощами и зеленью',
+      kcal: 320, protein: 30, fat: 14, carbs: 16,
+      ingredients: [
+        {name: 'Творог 5%', amount: 200, unit: 'г', category: 'Молочные', search: 'творог 5%'},
+        {name: 'Огурцы', amount: 100, unit: 'г', category: 'Овощи', search: 'огурцы'},
+        {name: 'Зелень (укроп/петрушка)', amount: 20, unit: 'г', category: 'Овощи', search: 'зелень укроп'},
+        {name: 'Сметана 15%', amount: 30, unit: 'г', category: 'Молочные', search: 'сметана 15%'}
+      ]
+    }
+  ]
+};
+
 let currentCat='ВСЕ';
 const isCardio=e=>e.cat==='КАРДИО';
 function loadPrefs(){try{return JSON.parse(localStorage.getItem('fit_prefs')||'{}')}catch(e){return{}}}
@@ -310,9 +496,8 @@ function calcDailyCalories(){
   const p=getProfile();if(!p)return 0;
   let bmr=10*p.weight+6.25*p.height-5*p.age;
   bmr+=p.gender==='male'?5:-161;
-  const activity=1.375; // лёгкая активность (3 тренировки в неделю)
+  const activity=1.375;
   let calories=bmr*activity;
-  // Корректировка под цель
   if(p.goal==='lose')calories-=500;
   else if(p.goal==='gain')calories+=300;
   return Math.round(calories);
@@ -462,6 +647,182 @@ function setLog(l){localStorage.setItem('fit_log',JSON.stringify(l))}
 function logDay(){const l=getLog();const d=new Date().toISOString().slice(0,10);l[d]=(l[d]||0)+1;setLog(l);}
 function ring(cx,cy,r,pct,color){const c=2*Math.PI*r;return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="12"/><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="12" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-pct)}" transform="rotate(-90 ${cx} ${cy})"/>`;}
 
+// ===== ПИТАНИЕ =====
+let currentMenu = null;
+
+function regenerateMenu(){
+  // Выбираем случайный рецепт из каждой категории
+  currentMenu = {
+    breakfast: recipes.breakfast[Math.floor(Math.random()*recipes.breakfast.length)],
+    lunch: recipes.lunch[Math.floor(Math.random()*recipes.lunch.length)],
+    snack: recipes.snack[Math.floor(Math.random()*recipes.snack.length)],
+    dinner: recipes.dinner[Math.floor(Math.random()*recipes.dinner.length)]
+  };
+  // Сохраняем в localStorage чтобы не менялось при переключении вкладок
+  localStorage.setItem('fit_menu', JSON.stringify({
+    date: new Date().toISOString().slice(0,10),
+    menu: currentMenu
+  }));
+  renderMeals();
+  hap('success');
+}
+
+function loadMenu(){
+  const saved = localStorage.getItem('fit_menu');
+  if(saved){
+    const data = JSON.parse(saved);
+    if(data.date === new Date().toISOString().slice(0,10)){
+      currentMenu = data.menu;
+      return;
+    }
+  }
+  regenerateMenu();
+}
+
+function scaleRecipe(recipe, targetKcal){
+  const factor = targetKcal / recipe.kcal;
+  return {
+    name: recipe.name,
+    kcal: Math.round(recipe.kcal * factor),
+    protein: Math.round(recipe.protein * factor),
+    fat: Math.round(recipe.fat * factor),
+    carbs: Math.round(recipe.carbs * factor),
+    ingredients: recipe.ingredients.map(ing => ({
+      ...ing,
+      amount: Math.round(ing.amount * factor * 10) / 10
+    }))
+  };
+}
+
+function renderMeals(){
+  if(!currentMenu) loadMenu();
+  const profile = getProfile();
+  const dailyKcal = calcDailyCalories();
+  
+  // Распределение калорий по приёмам пищи
+  const mealTargets = {
+    breakfast: Math.round(dailyKcal * 0.27),
+    lunch: Math.round(dailyKcal * 0.38),
+    snack: Math.round(dailyKcal * 0.12),
+    dinner: Math.round(dailyKcal * 0.23)
+  };
+  
+  const mealNames = {breakfast: 'Завтрак', lunch: 'Обед', snack: 'Перекус', dinner: 'Ужин'};
+  const mealIcons = {breakfast: '🌅', lunch: '☀️', snack: '🍎', dinner: '🌙'};
+  
+  const container = document.getElementById('mealsContainer');
+  container.innerHTML = Object.keys(currentMenu).map(mealKey => {
+    const scaled = scaleRecipe(currentMenu[mealKey], mealTargets[mealKey]);
+    const ingredientsHtml = scaled.ingredients.map(ing => {
+      const amountStr = ing.amount % 1 === 0 ? ing.amount : ing.amount.toFixed(1);
+      return `
+        <div class="ingredient">
+          <div class="ingredient-info">
+            <div class="ingredient-name">${ing.name}</div>
+            <div class="ingredient-amount">${amountStr} ${ing.unit}</div>
+          </div>
+          <div class="ingredient-actions">
+            <button class="btn small pyaterochka" onclick="openStore('pyaterochka','${ing.search}')">🛒 5ка</button>
+            <button class="btn small magnit" onclick="openStore('magnit','${ing.search}')">🛒 Магнит</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+    
+    return `
+      <div class="meal-card">
+        <div class="meal-header">
+          <div class="meal-name">${mealIcons[mealKey]} ${mealNames[mealKey]}</div>
+          <div class="meal-kcal">${scaled.kcal} ккал</div>
+        </div>
+        <div style="font-size:14px;color:#f5f5f7;margin-bottom:10px;font-weight:500">${scaled.name}</div>
+        <div class="meal-macros">
+          <span><span class="dot p"></span>Б ${scaled.protein}г</span>
+          <span><span class="dot f"></span>Ж ${scaled.fat}г</span>
+          <span><span class="dot c"></span>У ${scaled.carbs}г</span>
+        </div>
+        ${ingredientsHtml}
+      </div>
+    `;
+  }).join('');
+}
+
+function openStore(store, query){
+  hap('light');
+  const encoded = encodeURIComponent(query);
+  let url;
+  if(store === 'pyaterochka'){
+    url = `https://5ka.ru/search?query=${encoded}`;
+  } else {
+    url = `https://magnit.ru/search?q=${encoded}`;
+  }
+  window.open(url, '_blank');
+}
+
+function copyShoppingList(){
+  if(!currentMenu) loadMenu();
+  const profile = getProfile();
+  const dailyKcal = calcDailyCalories();
+  const mealTargets = {
+    breakfast: Math.round(dailyKcal * 0.27),
+    lunch: Math.round(dailyKcal * 0.38),
+    snack: Math.round(dailyKcal * 0.12),
+    dinner: Math.round(dailyKcal * 0.23)
+  };
+  
+  // Собираем все ингредиенты и группируем по категориям
+  const categories = {};
+  Object.keys(currentMenu).forEach(mealKey => {
+    const scaled = scaleRecipe(currentMenu[mealKey], mealTargets[mealKey]);
+    scaled.ingredients.forEach(ing => {
+      if(!categories[ing.category]) categories[ing.category] = [];
+      categories[ing.category].push(ing);
+    });
+  });
+  
+  // Формируем текст
+  let text = '🛒 СПИСОК ПОКУПОК\n';
+  text += `📅 На ${new Date().toLocaleDateString('ru-RU')}\n`;
+  text += `🔥 Норма: ${dailyKcal} ккал/день\n\n`;
+  
+  Object.keys(categories).forEach(cat => {
+    text += `${cat}:\n`;
+    categories[cat].forEach(ing => {
+      const amountStr = ing.amount % 1 === 0 ? ing.amount : ing.amount.toFixed(1);
+      text += `• ${ing.name} — ${amountStr} ${ing.unit}\n`;
+    });
+    text += '\n';
+  });
+  
+  // Копируем в буфер
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(() => {
+      showToast();
+    }).catch(() => {
+      fallbackCopy(text);
+    });
+  } else {
+    fallbackCopy(text);
+  }
+}
+
+function fallbackCopy(text){
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+  textarea.style.position = 'fixed';
+  textarea.style.opacity = '0';
+  document.body.appendChild(textarea);
+  textarea.select();
+  try{document.execCommand('copy');showToast();}catch(e){alert('Не удалось скопировать. Скопируй вручную.');}
+  document.body.removeChild(textarea);
+}
+
+function showToast(){
+  const toast = document.getElementById('copyToast');
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
 function drawNutrition(){
   const calories=calcDailyCalories();
   const macros=calcMacros();
@@ -469,24 +830,8 @@ function drawNutrition(){
   document.getElementById('proteinGrams').textContent=macros.protein+'г';
   document.getElementById('fatGrams').textContent=macros.fat+'г';
   document.getElementById('carbsGrams').textContent=macros.carbs+'г';
-  
-  const profile=getProfile();
-  const foods=[
-    {name:'Куриная грудка',detail:'165 ккал / 31г белка на 100г'},
-    {name:'Яйца',detail:'155 ккал / 13г белка на 100г'},
-    {name:'Творог 5%',detail:'121 ккал / 17г белка на 100г'},
-    {name:'Овсянка',detail:'389 ккал / 13г белка на 100г'},
-    {name:'Рис бурый',detail:'111 ккал / 2.6г белка на 100г'},
-    {name:'Гречка',detail:'132 ккал / 4.5г белка на 100г'},
-    {name:'Банан',detail:'89 ккал / 1.1г белка на 100г'},
-    {name:'Авокадо',detail:'160 ккал / 2г белка на 100г'},
-    {name:'Лосось',detail:'208 ккал / 20г белка на 100г'},
-    {name:'Миндаль',detail:'579 ккал / 21г белка на 100г'}
-  ];
-  document.getElementById('foodList').innerHTML=foods.map(f=>`<div class="food-item"><div class="food-name">${f.name}</div><div class="food-detail">${f.detail}</div></div>`).join('');
-  
-  const goalText={lose:'Для похудения держи дефицит 500 ккал. Ешь больше белка (2.2г/кг) для сохранения мышц. Избегай сахара и фастфуда.',maintain:'Для поддержания формы ешь по норме. Баланс БЖУ: 30% белки, 30% жиры, 40% углеводы.',gain:'Для набора массы ешь профицит 300 ккал. Увеличь углеводы для энергии. Ешь каждые 3-4 часа.',endurance:'Для выносливости увеличь углеводы до 50-60% рациона. Пей достаточно воды. Ешь перед тренировкой за 2 часа.'};
-  document.getElementById('nutritionTips').textContent=goalText[profile?.goal]||goalText.maintain;
+  loadMenu();
+  renderMeals();
 }
 
 function drawStats(){
