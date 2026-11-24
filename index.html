@@ -33,6 +33,7 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
 .pose-label{font-size:11px;color:#86868b;text-transform:uppercase;letter-spacing:.08em;font-weight:600;padding:8px 0}
 .pose-label.active{color:#e10600}
 .steppers{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.steppers.two{grid-template-columns:1fr 1fr}
 .stp{background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px 4px;text-align:center}
 .stp .k{font-size:9px;color:#86868b;text-transform:uppercase;letter-spacing:.08em;font-weight:600}
 .stp .v{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;margin:4px 0}
@@ -118,53 +119,54 @@ function hap(t){try{tg.HapticFeedback.impactOccurred(t||'light')}catch(e){}}
 function switchTab(id,b){hap('light');document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');b.classList.add('active');if(id==='stats')drawStats();}
 
 const IMG='https://exercise-dataset.com/images/flat/';
-// t:'sp'=start/peak, t:'m'=main. Имена slug проверены в базе RepDB.
+// t:'sp' = старт+пик (две РАЗНЫЕ позы). t:'m' = одна поза. unit для кардио: 'мин' или 'сек'.
 const allExercises=[
   {id:'sq',name:'Приседания',cat:'НОГИ',tag:'СИЛА',sets:3,reps:15,weight:0,slug:'bodyweight-squat',t:'sp'},
   {id:'gq',name:'Гоблет-присед',cat:'НОГИ',tag:'СИЛА',sets:3,reps:12,weight:8,slug:'goblet-squat',t:'sp'},
   {id:'lu',name:'Выпады',cat:'НОГИ',tag:'СИЛА',sets:3,reps:12,weight:0,slug:'walking-lunge',t:'sp'},
   {id:'pu',name:'Отжимания',cat:'ГРУДЬ',tag:'СИЛА',sets:3,reps:12,weight:0,slug:'push-up',t:'sp'},
   {id:'bp',name:'Жим штанги лёжа',cat:'ГРУДЬ',tag:'СИЛА',sets:4,reps:8,weight:40,slug:'bench-press',t:'sp'},
-  {id:'ap',name:'Отжимания лучник',cat:'ГРУДЬ',tag:'СИЛА',sets:3,reps:8,weight:0,slug:'archer-push-ups',t:'sp'},
   {id:'br',name:'Тяга штанги в наклоне',cat:'СПИНА',tag:'СИЛА',sets:3,reps:10,weight:30,slug:'barbell-row',t:'sp'},
-  {id:'pr',name:'Подтягивания (с поддержкой)',cat:'СПИНА',tag:'СИЛА',sets:3,reps:8,weight:0,slug:'assisted-pull-ups',t:'sp'},
-  {id:'ap2',name:'Подтягивания лучник',cat:'СПИНА',tag:'СИЛА',sets:3,reps:6,weight:0,slug:'archer-pull-ups',t:'sp'},
-  {id:'sh',name:'Шраги со штангой',cat:'СПИНА',tag:'СИЛА',sets:3,reps:12,weight:30,slug:'behind-the-back-barbell-shrug',t:'sp'},
-  {id:'ar',name:'Жим Арнольда',cat:'ПЛЕЧИ',tag:'СИЛА',sets:3,reps:10,weight:6,slug:'arnold-press',t:'sp'},
+  {id:'pr',name:'Подтягивания',cat:'СПИНА',tag:'СИЛА',sets:3,reps:8,weight:0,slug:'assisted-pull-ups',t:'sp'},
   {id:'cr',name:'Скручивания',cat:'КОР',tag:'КОР',sets:3,reps:20,weight:0,slug:'crunches',t:'sp'},
   {id:'bc',name:'Велосипед (пресс)',cat:'КОР',tag:'КОР',sets:3,reps:20,weight:0,slug:'bicycle-crunch',t:'sp'},
   {id:'cc',name:'Скручивания в кроссовере',cat:'КОР',tag:'КОР',sets:3,reps:15,weight:0,slug:'cable-crunch',t:'sp'},
-  {id:'aw',name:'Ролик для пресса',cat:'КОР',tag:'КОР',sets:3,reps:10,weight:0,slug:'ab-wheel-rollout',t:'sp'},
   {id:'pl',name:'Планка',cat:'КОР',tag:'КОР',sets:3,reps:45,weight:0,slug:'plank',t:'m'},
-  {id:'bph',name:'Планка «медведь»',cat:'КОР',tag:'КОР',sets:3,reps:30,weight:0,slug:'bear-plank-hold',t:'m'},
-  {id:'jj',name:'Джампинг Джек',cat:'КАРДИО',tag:'КАРДИО',sets:3,reps:30,weight:0,slug:'jumping-jacks',t:'sp'},
-  {id:'mc',name:'Скалолаз',cat:'КАРДИО',tag:'КАРДИО',sets:3,reps:20,weight:0,slug:'mountain-climbers',t:'sp'},
-  {id:'bcr',name:'Медвежий ход',cat:'КАРДИО',tag:'КАРДИО',sets:3,reps:20,weight:0,slug:'bear-crawl',t:'sp'},
-  {id:'brs',name:'Канаты (двойной удар)',cat:'КАРДИО',tag:'КАРДИО',sets:3,reps:20,weight:0,slug:'battle-rope-double-slam',t:'sp'},
-  {id:'run',name:'Бег',cat:'КАРДИО',tag:'КАРДИО',sets:1,reps:20,weight:0,slug:'running',t:'m'},
-  {id:'tm',name:'Беговая дорожка',cat:'КАРДИО',tag:'КАРДИО',sets:1,reps:20,weight:0,slug:'treadmill-running',t:'m'},
-  {id:'el',name:'Эллипсоид',cat:'КАРДИО',tag:'КАРДИО',sets:1,reps:20,weight:0,slug:'elliptical-trainer',t:'m'},
-  {id:'ab',name:'Велотренажёр Air Bike',cat:'КАРДИО',tag:'КАРДИО',sets:1,reps:15,weight:0,slug:'air-bike',t:'m'},
-  {id:'brop',name:'Канаты (волны)',cat:'КАРДИО',tag:'КАРДИО',sets:3,reps:30,weight:0,slug:'battle-ropes',t:'m'}
+  {id:'aw',name:'Ролик для пресса',cat:'КОР',tag:'КОР',sets:3,reps:10,weight:0,slug:'ab-wheel-rollout',t:'m'},
+  {id:'sh',name:'Жим Арнольда',cat:'ПЛЕЧИ',tag:'СИЛА',sets:3,reps:10,weight:6,slug:'arnold-press',t:'m'},
+  {id:'jj',name:'Джампинг Джек',cat:'КАРДИО',tag:'КАРДИО',sets:3,reps:30,weight:0,slug:'jumping-jacks',t:'sp',unit:'сек'},
+  {id:'mc',name:'Скалолаз',cat:'КАРДИО',tag:'КАРДИО',sets:3,reps:30,weight:0,slug:'mountain-climbers',t:'sp',unit:'сек'},
+  {id:'bcr',name:'Медвежий ход',cat:'КАРДИО',tag:'КАРДИО',sets:3,reps:30,weight:0,slug:'bear-crawl',t:'m',unit:'сек'},
+  {id:'brop',name:'Канаты (двойной удар)',cat:'КАРДИО',tag:'КАРДИО',sets:3,reps:30,weight:0,slug:'battle-rope-double-slam',t:'m',unit:'сек'},
+  {id:'run',name:'Бег',cat:'КАРДИО',tag:'КАРДИО',sets:1,reps:20,weight:0,slug:'running',t:'m',unit:'мин'},
+  {id:'tm',name:'Беговая дорожка',cat:'КАРДИО',tag:'КАРДИО',sets:1,reps:20,weight:0,slug:'treadmill-running',t:'m',unit:'мин'},
+  {id:'el',name:'Эллипсоид',cat:'КАРДИО',tag:'КАРДИО',sets:1,reps:20,weight:0,slug:'elliptical-trainer',t:'m',unit:'мин'},
+  {id:'ab',name:'Велотренажёр Air Bike',cat:'КАРДИО',tag:'КАРДИО',sets:1,reps:15,weight:0,slug:'air-bike',t:'m',unit:'мин'}
 ];
 
 let currentCat='ВСЕ';
+const isCardio=e=>e.cat==='КАРДИО';
 function loadPrefs(){try{return JSON.parse(localStorage.getItem('fit_prefs')||'{}')}catch(e){return{}}}
 function savePrefs(p){localStorage.setItem('fit_prefs',JSON.stringify(p))}
 function loadHistory(){try{return JSON.parse(localStorage.getItem('fit_history')||'[]')}catch(e){return[]}}
 function saveHistory(h){localStorage.setItem('fit_history',JSON.stringify(h))}
 function getLastSession(){const h=loadHistory();return h.length?h[h.length-1]:null}
 
-// Цепочка загрузки картинки: start -> peak -> main -> скрыть карточку
-function imgFail(el,slug,step){
-  const order=['start','peak','main'];
-  let i=order.indexOf(step)+1;
-  if(i<order.length){el.src=IMG+slug+'-'+order[i]+'.webp';el.onerror=()=>imgFail(el,slug,order[i]);}
+// Умная цепочка: если нужная поза не грузится — пробуем запасные, иначе скрываем карточку
+function stepHtml(slug,label,steps){
+  const first=steps[0];
+  return `<div class="pose-card"><img data-slug="${slug}" data-step="${first}" data-steps="${steps.join(',')}" src="${IMG}${slug}-${first}.webp" onerror="imgFail(this)"><div class="pose-label">${label}</div></div>`;
+}
+function imgFail(el){
+  const steps=el.dataset.steps.split(',');
+  const i=steps.indexOf(el.dataset.step)+1;
+  if(i<steps.length){el.dataset.step=steps[i];el.src=IMG+el.dataset.slug+'-'+steps[i]+'.webp';}
   else{const c=el.closest('.pose-card');if(c)c.style.display='none';}
 }
-function poseHtml(slug,label,type){
-  const first=type==='m'?'main':'start';
-  return `<div class="pose-card"><img src="${IMG}${slug}-${first}.webp" onerror="imgFail(this,'${slug}','${first}')"><div class="pose-label${type==='m'?' active':''}">${label}</div></div>`;
+function visualHtml(e){
+  if(e.t==='m')return `<div class="exercise-visual single">${stepHtml(e.slug,'ПОЗИЦИЯ',['main','start','peak'])}</div>`;
+  // старт грузит start, пик грузит peak — позы РАЗНЫЕ
+  return `<div class="exercise-visual">${stepHtml(e.slug,'СТАРТ',['start','peak','main'])}${stepHtml(e.slug,'ПИК',['peak','start','main'])}</div>`;
 }
 
 function generate(){
@@ -203,25 +205,35 @@ function render(){
   const filtered=currentCat==='ВСЕ'?allExercises:allExercises.filter(e=>e.cat===currentCat);
   document.getElementById('exList').innerHTML=filtered.map(e=>{
     const v=prefs[e.id]||{sets:e.sets,reps:e.reps,weight:e.weight};
-    const unit=(e.id==='pl'||e.id==='bph'||e.id==='run'||e.id==='tm'||e.id==='el'||e.id==='ab')?'мин/сек':'повт';
+    const unit=isCardio(e)?(e.unit||'сек'):(e.id==='pl'?'сек':'повт');
     let lastInfo='';
-    if(last&&last.exercises[e.id]){const lv=last.exercises[e.id];lastInfo=`<div class="last-session">Прошлый раз: <strong>${lv.sets}×${lv.reps}</strong>${lv.weight?', '+lv.weight+' кг':''}</div>`;}
-    let visual;
-    if(e.t==='m'){visual=`<div class="exercise-visual single">${poseHtml(e.slug,'ПОЗИЦИЯ','m')}</div>`;}
-    else{visual=`<div class="exercise-visual">${poseHtml(e.slug,'СТАРТ','sp')}${poseHtml(e.slug,'ПИК','sp')}</div>`;}
-    return `<div class="ex"><div class="ex-head"><div class="ex-name">${e.name}</div><div class="ex-tag">${e.tag}</div></div>
-      ${lastInfo}${visual}
-      <div class="steppers">
+    if(last&&last.exercises[e.id]){
+      const lv=last.exercises[e.id];
+      lastInfo=`<div class="last-session">Прошлый раз: <strong>${lv.sets}×${lv.reps} ${unit}</strong>${(!isCardio(e)&&lv.weight)?', '+lv.weight+' кг':''}</div>`;
+    }
+    let steppers;
+    if(isCardio(e)){
+      // Кардио: Раунды + Время (без веса)
+      const step=e.unit==='мин'?1:5;
+      steppers=`<div class="steppers two">
+        <div class="stp"><div class="k">Раунды</div><div class="v">${v.sets}</div><div class="r"><button onclick="chg('${e.id}','sets',-1)">−</button><button onclick="chg('${e.id}','sets',1)">+</button></div></div>
+        <div class="stp"><div class="k">${e.unit==='мин'?'Минут':'Секунд'}</div><div class="v">${v.reps}</div><div class="r"><button onclick="chg('${e.id}','reps',${-step})">−</button><button onclick="chg('${e.id}','reps',${step})">+</button></div></div>
+      </div>`;
+    }else{
+      steppers=`<div class="steppers">
         <div class="stp"><div class="k">Подходы</div><div class="v">${v.sets}</div><div class="r"><button onclick="chg('${e.id}','sets',-1)">−</button><button onclick="chg('${e.id}','sets',1)">+</button></div></div>
-        <div class="stp"><div class="k">${unit==='мин/сек'?'Секунд':'Повторы'}</div><div class="v">${v.reps}</div><div class="r"><button onclick="chg('${e.id}','reps',${unit==='мин/сек'?15:-15})">−</button><button onclick="chg('${e.id}','reps',${unit==='мин/сек'?15:1})">+</button></div></div>
+        <div class="stp"><div class="k">${unit==='сек'?'Секунд':'Повторы'}</div><div class="v">${v.reps}</div><div class="r"><button onclick="chg('${e.id}','reps',${unit==='сек'?15:-15})">−</button><button onclick="chg('${e.id}','reps',${unit==='сек'?15:1})">+</button></div></div>
         <div class="stp"><div class="k">Вес, кг</div><div class="v">${v.weight}</div><div class="r"><button onclick="chg('${e.id}','weight',-2.5)">−</button><button onclick="chg('${e.id}','weight',2.5)">+</button></div></div>
-      </div>
+      </div>`;
+    }
+    return `<div class="ex"><div class="ex-head"><div class="ex-name">${e.name}</div><div class="ex-tag">${e.tag}</div></div>
+      ${lastInfo}${visualHtml(e)}${steppers}
       ${last?`<button class="btn ghost" onclick="loadLast('${e.id}')">↺ Загрузить прошлое</button>`:''}
     </div>`;
   }).join('');
 }
 function loadLast(id){hap('medium');const last=getLastSession();if(!last||!last.exercises[id])return;const lv=last.exercises[id];const prefs=loadPrefs();prefs[id]={sets:lv.sets,reps:lv.reps,weight:lv.weight};savePrefs(prefs);render();}
-function chg(id,key,delta){hap('light');const p=loadPrefs();const e=allExercises.find(x=>x.id===id);const v=p[id]||{sets:e.sets,reps:e.reps,weight:e.weight};v[key]=Math.max(key==='weight'?0:1,v[key]+delta);p[id]=v;savePrefs(p);render();}
+function chg(id,key,delta){hap('light');const p=loadPrefs();const e=allExercises.find(x=>x.id===id);const v=p[id]||{sets:e.sets,reps:e.reps,weight:e.weight};const min=isCardio(e)?(e.unit==='мин'?1:5):1;v[key]=Math.max(key==='weight'?0:min,v[key]+delta);p[id]=v;savePrefs(p);render();}
 
 function finish(){
   hap('success');
@@ -258,7 +270,7 @@ function drawStats(){
   const reversed=[...history].reverse().slice(0,10);
   histBox.innerHTML=reversed.map((h,idx)=>{
     const dateObj=new Date(h.date);const dateStr=dateObj.toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
-    const exHtml=allExercises.filter(e=>h.exercises[e.id]).map(e=>{const v=h.exercises[e.id];return `<div class="history-ex"><span class="n">${e.name}</span><span class="v">${v.sets}×${v.reps}${v.weight?', '+v.weight+' кг':''}</span></div>`;}).join('');
+    const exHtml=allExercises.filter(e=>h.exercises[e.id]).map(e=>{const v=h.exercises[e.id];const unit=isCardio(e)?(e.unit||'сек'):(e.id==='pl'?'сек':'повт');return `<div class="history-ex"><span class="n">${e.name}</span><span class="v">${v.sets}×${v.reps} ${unit}${(!isCardio(e)&&v.weight)?', '+v.weight+' кг':''}</span></div>`;}).join('');
     return `<div class="history-card"><div class="history-date"><span>${dateStr}</span><span class="num">#${history.length-idx}</span></div>${exHtml}</div>`;
   }).join('');
 }
