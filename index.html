@@ -21,6 +21,7 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
 .btn{width:100%;background:#e10600;color:#fff;border:none;padding:16px;border-radius:14px;font-size:17px;font-weight:600;cursor:pointer;margin-top:14px;transition:opacity .2s}
 .btn:active{opacity:.65}.btn.green{background:#30d158;color:#000}
 .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.15);color:#f5f5f7;font-size:14px;padding:10px;margin-top:8px}
+.btn.premium{background:linear-gradient(135deg,#e10600,#ff6b00);box-shadow:0 4px 20px rgba(225,6,0,0.4)}
 .ex{border-bottom:1px solid rgba(255,255,255,.07);padding:18px 0}.ex:last-child{border-bottom:none}
 .ex-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
 .ex-name{font-size:19px;font-weight:600}.ex-tag{font-size:11px;color:#e10600;font-weight:700;letter-spacing:.08em}
@@ -40,8 +41,9 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
 .stp .r{display:flex;justify-content:center;gap:10px}
 .stp button{width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:transparent;color:#fff;font-size:16px;cursor:pointer}
 .stp button:active{background:#e10600;border-color:#e10600}
-.nav{position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-around;padding:10px 0 22px;z-index:100}
-.nav-btn{background:none;border:none;color:#86868b;font-size:10px;font-weight:500;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:4px 16px}
+.nav{position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,.08);display:flex;overflow-x:auto;padding:10px 0 22px;z-index:100;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav-btn{background:none;border:none;color:#86868b;font-size:10px;font-weight:500;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:4px 16px;flex-shrink:0}
 .nav-btn.active{color:#f5f5f7}.nav-icon{font-size:20px}
 .tab{display:none;animation:fadeIn .25s ease}.tab.active{display:block}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -57,6 +59,7 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
 .ring-row{display:flex;justify-content:space-around;padding:6px 0}
 .ring-row .ri{text-align:center;font-size:12px;color:#86868b}
 .ring-row .rv{font-size:18px;font-weight:700;color:#f5f5f7}
+.ring-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;vertical-align:middle}
 .chart-wrap{padding:6px 0}
 .history-card{background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px;margin-bottom:10px}
 .history-date{font-size:13px;color:#86868b;font-weight:600;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
@@ -75,12 +78,90 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
 .cat-chip{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);color:#86868b;padding:8px 16px;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;flex-shrink:0}
 .cat-chip.active{background:#e10600;color:#fff;border-color:#e10600}
 .attribution{position:fixed;bottom:70px;right:10px;font-size:9px;color:rgba(255,255,255,.3);z-index:5;text-decoration:none}
+
+/* Модалка регистрации */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(20px);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:#1c1c1e;border-radius:20px;padding:28px 24px;width:100%;max-width:400px;border:1px solid rgba(255,255,255,.1);max-height:90vh;overflow-y:auto}
+.modal h2{font-size:22px;font-weight:700;margin-bottom:6px}
+.modal p{font-size:14px;color:#86868b;margin-bottom:20px;line-height:1.4}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:12px;color:#86868b;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;font-weight:600}
+.form-group input,.form-group select{width:100%;background:#000;border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:12px;color:#f5f5f7;font-size:16px;font-family:inherit}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:#e10600}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* Карточки тренеров */
+.trainer-card{background:rgba(28,28,30,0.85);backdrop-filter:blur(12px);border-radius:20px;padding:22px;margin-bottom:14px;border:1px solid rgba(255,255,255,.1);position:relative;overflow:hidden}
+.trainer-card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px}
+.trainer-card.ai::before{background:linear-gradient(90deg,#00c7ff,#30d158)}
+.trainer-card.human::before{background:linear-gradient(90deg,#e10600,#ff6b00)}
+.trainer-icon{font-size:40px;margin-bottom:10px}
+.trainer-name{font-size:20px;font-weight:700;margin-bottom:4px}
+.trainer-price{font-size:14px;color:#e10600;font-weight:600;margin-bottom:14px}
+.trainer-desc{font-size:14px;color:#86868b;line-height:1.5;margin-bottom:14px}
+.trainer-features{list-style:none;padding:0}
+.trainer-features li{font-size:13px;color:#f5f5f7;padding:6px 0 6px 24px;position:relative}
+.trainer-features li::before{content:"✓";position:absolute;left:0;color:#30d158;font-weight:700}
+.trainer-card.ai .trainer-features li::before{color:#00c7ff}
+
+/* Питание */
+.macro-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px}
+.macro-card{background:rgba(0,0,0,0.5);border-radius:14px;padding:14px;text-align:center;border:1px solid rgba(255,255,255,.08)}
+.macro-card .label{font-size:11px;color:#86868b;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.macro-card .value{font-size:24px;font-weight:700}
+.macro-card.protein .value{color:#e10600}
+.macro-card.fat .value{color:#ffcc00}
+.macro-card.carbs .value{color:#30d158}
+.food-list{margin-top:14px}
+.food-item{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.food-item:last-child{border-bottom:none}
+.food-name{font-size:14px;color:#f5f5f7}
+.food-detail{font-size:13px;color:#86868b}
 </style>
 </head>
 <body>
 <a class="attribution" href="https://repdb.co" rel="nofollow" target="_blank">Exercise data by RepDB</a>
 <div class="trackline"></div>
 <div class="wrap">
+
+<!-- Модалка регистрации -->
+<div id="regModal" class="modal-overlay hidden">
+  <div class="modal">
+    <h2>👋 Добро пожаловать</h2>
+    <p>Расскажи о себе — я рассчитаю калории, БЖУ и подберу программу под твою цель.</p>
+    <div class="form-group">
+      <label>Вес, кг</label>
+      <input type="number" id="regWeight" placeholder="75" min="30" max="200">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Рост, см</label>
+        <input type="number" id="regHeight" placeholder="175" min="100" max="250">
+      </div>
+      <div class="form-group">
+        <label>Возраст</label>
+        <input type="number" id="regAge" placeholder="25" min="14" max="100">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Пол</label>
+      <select id="regGender">
+        <option value="male">Мужской</option>
+        <option value="female">Женский</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Твоя цель</label>
+      <select id="regGoal">
+        <option value="lose">Похудение</option>
+        <option value="maintain">Поддержание формы</option>
+        <option value="gain">Набор массы</option>
+        <option value="endurance">Выносливость</option>
+      </select>
+    </div>
+    <button class="btn" onclick="saveProfile()">Начать тренировки</button>
+  </div>
+</div>
 
 <div id="tab-workout" class="tab active">
   <h1>Тренировка</h1><p class="subtitle">Программа под твой профиль на сегодня</p>
@@ -98,10 +179,79 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
   </div></div>
 </div>
 
+<div id="tab-nutrition" class="tab">
+  <h1>Питание</h1><p class="subtitle">Твоя суточная норма</p>
+  <div class="section"><div class="card">
+    <h2>Калории в день</h2>
+    <div style="text-align:center;margin:20px 0">
+      <div style="font-size:48px;font-weight:700;color:#e10600" id="dailyCalories">0</div>
+      <div style="font-size:13px;color:#86868b;margin-top:4px">ккал / день</div>
+    </div>
+    <div class="macro-row">
+      <div class="macro-card protein"><div class="label">Белки</div><div class="value" id="proteinGrams">0г</div></div>
+      <div class="macro-card fat"><div class="label">Жиры</div><div class="value" id="fatGrams">0г</div></div>
+      <div class="macro-card carbs"><div class="label">Углеводы</div><div class="value" id="carbsGrams">0г</div></div>
+    </div>
+  </div></div>
+  <div class="section"><div class="card">
+    <h2>Рекомендуемые продукты</h2>
+    <div class="food-list" id="foodList"></div>
+  </div></div>
+  <div class="section"><div class="card">
+    <h2>Советы по питанию</h2>
+    <div id="nutritionTips" style="font-size:14px;color:#86868b;line-height:1.5"></div>
+  </div></div>
+</div>
+
+<div id="tab-trainers" class="tab">
+  <h1>Тренеры</h1>
+  <p class="subtitle">Выбери свой уровень поддержки</p>
+  <div class="section">
+    <div class="trainer-card ai">
+      <div class="trainer-icon">🤖</div>
+      <div class="trainer-name">ИИ-тренер</div>
+      <div class="trainer-price">299 ₽ / месяц</div>
+      <div class="trainer-desc">Персональный ИИ-наставник, который анализирует каждую твою тренировку и адаптирует программу в реальном времени.</div>
+      <ul class="trainer-features">
+        <li>Доступен 24/7 — отвечает мгновенно</li>
+        <li>Анализирует историю и прогресс</li>
+        <li>Корректирует нагрузку после каждой тренировки</li>
+        <li>Отвечает на вопросы по технике</li>
+        <li>Составляет план питания под цели</li>
+        <li>Работает на данных тысяч успешных атлетов</li>
+      </ul>
+      <button class="btn premium" onclick="buyTrainer('ai')">Подключить ИИ-тренера</button>
+    </div>
+    <div class="trainer-card human">
+      <div class="trainer-icon">👨‍🏫</div>
+      <div class="trainer-name">Живой тренер</div>
+      <div class="trainer-price">4 990 ₽ / месяц</div>
+      <div class="trainer-desc">Сертифицированный тренер с опытом 5+ лет. Живое общение, контроль техники и полная ответственность за твой результат.</div>
+      <ul class="trainer-features">
+        <li>Видеозвонки 2 раза в неделю по 30 минут</li>
+        <li>Проверка техники по видео в чате</li>
+        <li>Индивидуальная программа под цели</li>
+        <li>Работа с травмами и ограничениями</li>
+        <li>Мотивация и контроль дисциплины</li>
+        <li>Корректировка программы в реальном времени</li>
+      </ul>
+      <button class="btn premium" onclick="buyTrainer('human')">Подключить живого тренера</button>
+    </div>
+  </div>
+</div>
+
 <div id="tab-stats" class="tab">
   <h1>Прогресс</h1><p class="subtitle">Активность за неделю</p>
-  <div class="section"><div class="card"><div class="rings"><svg id="ringsSvg" width="180" height="180" viewBox="0 0 180 180"></svg></div><div class="ring-row"><div class="ri">Тренировки<div class="rv" id="r1">0</div></div><div class="ri">Подходы<div class="rv" id="r2">0</div></div><div class="ri">Дыхание<div class="rv" id="r3">0</div></div></div></div></div>
+  <div class="section"><div class="card">
+    <div class="rings"><svg id="ringsSvg" width="180" height="180" viewBox="0 0 180 180"></svg></div>
+    <div class="ring-row">
+      <div class="ri"><span class="ring-dot" style="background:#e10600"></span>Тренировки<div class="rv" id="r1">0</div></div>
+      <div class="ri"><span class="ring-dot" style="background:#30d158"></span>Калории<div class="rv" id="r2">0</div></div>
+      <div class="ri"><span class="ring-dot" style="background:#00c7ff"></span>Дыхание<div class="rv" id="r3">0</div></div>
+    </div>
+  </div></div>
   <div class="section"><div class="card"><h2>Дни активности</h2><div class="chart-wrap"><svg id="chartSvg" width="100%" height="120" viewBox="0 0 300 120"></svg></div></div></div>
+  <div class="section"><div class="card"><h2>Сожжено калорий</h2><div id="caloriesList"></div></div></div>
   <div class="section"><div class="card"><h2>История тренировок</h2><div id="historyList"></div></div></div>
 </div>
 
@@ -110,38 +260,39 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
 <div class="nav">
   <button class="nav-btn active" onclick="switchTab('workout',this)"><span class="nav-icon">◉</span><span>Тренировка</span></button>
   <button class="nav-btn" onclick="switchTab('breath',this)"><span class="nav-icon">○</span><span>Дыхание</span></button>
+  <button class="nav-btn" onclick="switchTab('nutrition',this)"><span class="nav-icon">🍎</span><span>Питание</span></button>
+  <button class="nav-btn" onclick="switchTab('trainers',this)"><span class="nav-icon">👤</span><span>Тренеры</span></button>
   <button class="nav-btn" onclick="switchTab('stats',this)"><span class="nav-icon">▤</span><span>Прогресс</span></button>
 </div>
 
 <script>
 const tg=window.Telegram.WebApp;tg.expand();tg.ready();
 function hap(t){try{tg.HapticFeedback.impactOccurred(t||'light')}catch(e){}}
-function switchTab(id,b){hap('light');document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');b.classList.add('active');if(id==='stats')drawStats();}
+function switchTab(id,b){hap('light');document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');b.classList.add('active');if(id==='stats')drawStats();if(id==='nutrition')drawNutrition();}
 
 const IMG='https://exercise-dataset.com/images/flat/';
-// t:'sp' = старт+пик (две РАЗНЫЕ позы). t:'m' = одна поза. unit для кардио: 'мин' или 'сек'.
 const allExercises=[
-  {id:'sq',name:'Приседания',cat:'НОГИ',tag:'СИЛА',sets:3,reps:15,weight:0,slug:'bodyweight-squat',t:'sp'},
-  {id:'gq',name:'Гоблет-присед',cat:'НОГИ',tag:'СИЛА',sets:3,reps:12,weight:8,slug:'goblet-squat',t:'sp'},
-  {id:'lu',name:'Выпады',cat:'НОГИ',tag:'СИЛА',sets:3,reps:12,weight:0,slug:'walking-lunge',t:'sp'},
-  {id:'pu',name:'Отжимания',cat:'ГРУДЬ',tag:'СИЛА',sets:3,reps:12,weight:0,slug:'push-up',t:'sp'},
-  {id:'bp',name:'Жим штанги лёжа',cat:'ГРУДЬ',tag:'СИЛА',sets:4,reps:8,weight:40,slug:'bench-press',t:'sp'},
-  {id:'br',name:'Тяга штанги в наклоне',cat:'СПИНА',tag:'СИЛА',sets:3,reps:10,weight:30,slug:'barbell-row',t:'sp'},
-  {id:'pr',name:'Подтягивания',cat:'СПИНА',tag:'СИЛА',sets:3,reps:8,weight:0,slug:'assisted-pull-ups',t:'sp'},
-  {id:'cr',name:'Скручивания',cat:'КОР',tag:'КОР',sets:3,reps:20,weight:0,slug:'crunches',t:'sp'},
-  {id:'bc',name:'Велосипед (пресс)',cat:'КОР',tag:'КОР',sets:3,reps:20,weight:0,slug:'bicycle-crunch',t:'sp'},
-  {id:'cc',name:'Скручивания в кроссовере',cat:'КОР',tag:'КОР',sets:3,reps:15,weight:0,slug:'cable-crunch',t:'sp'},
-  {id:'pl',name:'Планка',cat:'КОР',tag:'КОР',sets:3,reps:45,weight:0,slug:'plank',t:'m'},
-  {id:'aw',name:'Ролик для пресса',cat:'КОР',tag:'КОР',sets:3,reps:10,weight:0,slug:'ab-wheel-rollout',t:'m'},
-  {id:'sh',name:'Жим Арнольда',cat:'ПЛЕЧИ',tag:'СИЛА',sets:3,reps:10,weight:6,slug:'arnold-press',t:'m'},
-  {id:'jj',name:'Джампинг Джек',cat:'КАРДИО',tag:'КАРДИО',sets:3,reps:30,weight:0,slug:'jumping-jacks',t:'sp',unit:'сек'},
-  {id:'mc',name:'Скалолаз',cat:'КАРДИО',tag:'КАРДИО',sets:3,reps:30,weight:0,slug:'mountain-climbers',t:'sp',unit:'сек'},
-  {id:'bcr',name:'Медвежий ход',cat:'КАРДИО',tag:'КАРДИО',sets:3,reps:30,weight:0,slug:'bear-crawl',t:'m',unit:'сек'},
-  {id:'brop',name:'Канаты (двойной удар)',cat:'КАРДИО',tag:'КАРДИО',sets:3,reps:30,weight:0,slug:'battle-rope-double-slam',t:'m',unit:'сек'},
-  {id:'run',name:'Бег',cat:'КАРДИО',tag:'КАРДИО',sets:1,reps:20,weight:0,slug:'running',t:'m',unit:'мин'},
-  {id:'tm',name:'Беговая дорожка',cat:'КАРДИО',tag:'КАРДИО',sets:1,reps:20,weight:0,slug:'treadmill-running',t:'m',unit:'мин'},
-  {id:'el',name:'Эллипсоид',cat:'КАРДИО',tag:'КАРДИО',sets:1,reps:20,weight:0,slug:'elliptical-trainer',t:'m',unit:'мин'},
-  {id:'ab',name:'Велотренажёр Air Bike',cat:'КАРДИО',tag:'КАРДИО',sets:1,reps:15,weight:0,slug:'air-bike',t:'m',unit:'мин'}
+  {id:'sq',name:'Приседания',cat:'НОГИ',tag:'СИЛА',sets:3,reps:15,weight:0,slug:'bodyweight-squat',t:'sp',met:6.0},
+  {id:'gq',name:'Гоблет-присед',cat:'НОГИ',tag:'СИЛА',sets:3,reps:12,weight:8,slug:'goblet-squat',t:'sp',met:6.0},
+  {id:'lu',name:'Выпады',cat:'НОГИ',tag:'СИЛА',sets:3,reps:12,weight:0,slug:'walking-lunge',t:'sp',met:5.0},
+  {id:'pu',name:'Отжимания',cat:'ГРУДЬ',tag:'СИЛА',sets:3,reps:12,weight:0,slug:'push-up',t:'sp',met:8.0},
+  {id:'bp',name:'Жим штанги лёжа',cat:'ГРУДЬ',tag:'СИЛА',sets:4,reps:8,weight:40,slug:'bench-press',t:'sp',met:6.0},
+  {id:'br',name:'Тяга штанги в наклоне',cat:'СПИНА',tag:'СИЛА',sets:3,reps:10,weight:30,slug:'barbell-row',t:'sp',met:6.0},
+  {id:'pr',name:'Подтягивания',cat:'СПИНА',tag:'СИЛА',sets:3,reps:8,weight:0,slug:'assisted-pull-ups',t:'sp',met:8.0},
+  {id:'cr',name:'Скручивания',cat:'КОР',tag:'КОР',sets:3,reps:20,weight:0,slug:'crunches',t:'sp',met:3.5},
+  {id:'bc',name:'Велосипед (пресс)',cat:'КОР',tag:'КОР',sets:3,reps:20,weight:0,slug:'bicycle-crunch',t:'sp',met:5.0},
+  {id:'cc',name:'Скручивания в кроссовере',cat:'КОР',tag:'КОР',sets:3,reps:15,weight:0,slug:'cable-crunch',t:'sp',met:5.0},
+  {id:'pl',name:'Планка',cat:'КОР',tag:'КОР',sets:3,reps:45,weight:0,slug:'plank',t:'m',met:4.0},
+  {id:'aw',name:'Ролик для пресса',cat:'КОР',tag:'КОР',sets:3,reps:10,weight:0,slug:'ab-wheel-rollout',t:'m',met:5.0},
+  {id:'sh',name:'Жим Арнольда',cat:'ПЛЕЧИ',tag:'СИЛА',sets:3,reps:10,weight:6,slug:'arnold-press',t:'m',met:6.0},
+  {id:'jj',name:'Джампинг Джек',cat:'КАРДИО',tag:'КАРДИО',sets:3,reps:30,weight:0,slug:'jumping-jacks',t:'sp',unit:'сек',met:8.0},
+  {id:'mc',name:'Скалолаз',cat:'КАРДИО',tag:'КАРДИО',sets:3,reps:30,weight:0,slug:'mountain-climbers',t:'sp',unit:'сек',met:8.0},
+  {id:'bcr',name:'Медвежий ход',cat:'КАРДИО',tag:'КАРДИО',sets:3,reps:30,weight:0,slug:'bear-crawl',t:'m',unit:'сек',met:8.0},
+  {id:'brop',name:'Канаты (двойной удар)',cat:'КАРДИО',tag:'КАРДИО',sets:3,reps:30,weight:0,slug:'battle-rope-double-slam',t:'m',unit:'сек',met:8.0},
+  {id:'run',name:'Бег',cat:'КАРДИО',tag:'КАРДИО',sets:1,reps:20,weight:0,slug:'running',t:'m',unit:'мин',met:8.0},
+  {id:'tm',name:'Беговая дорожка',cat:'КАРДИО',tag:'КАРДИО',sets:1,reps:20,weight:0,slug:'treadmill-running',t:'m',unit:'мин',met:8.0},
+  {id:'el',name:'Эллипсоид',cat:'КАРДИО',tag:'КАРДИО',sets:1,reps:20,weight:0,slug:'elliptical-trainer',t:'m',unit:'мин',met:8.0},
+  {id:'ab',name:'Велотренажёр Air Bike',cat:'КАРДИО',tag:'КАРДИО',sets:1,reps:15,weight:0,slug:'air-bike',t:'m',unit:'мин',met:8.0}
 ];
 
 let currentCat='ВСЕ';
@@ -151,8 +302,47 @@ function savePrefs(p){localStorage.setItem('fit_prefs',JSON.stringify(p))}
 function loadHistory(){try{return JSON.parse(localStorage.getItem('fit_history')||'[]')}catch(e){return[]}}
 function saveHistory(h){localStorage.setItem('fit_history',JSON.stringify(h))}
 function getLastSession(){const h=loadHistory();return h.length?h[h.length-1]:null}
+function getProfile(){try{return JSON.parse(localStorage.getItem('fit_profile')||'null')}catch(e){return null}}
+function saveProfileData(p){localStorage.setItem('fit_profile',JSON.stringify(p))}
 
-// Умная цепочка: если нужная поза не грузится — пробуем запасные, иначе скрываем карточку
+// Формула Миффлина-Сан Жеора
+function calcDailyCalories(){
+  const p=getProfile();if(!p)return 0;
+  let bmr=10*p.weight+6.25*p.height-5*p.age;
+  bmr+=p.gender==='male'?5:-161;
+  const activity=1.375; // лёгкая активность (3 тренировки в неделю)
+  let calories=bmr*activity;
+  // Корректировка под цель
+  if(p.goal==='lose')calories-=500;
+  else if(p.goal==='gain')calories+=300;
+  return Math.round(calories);
+}
+
+function calcMacros(){
+  const p=getProfile();if(!p)return{protein:0,fat:0,carbs:0};
+  const calories=calcDailyCalories();
+  let proteinPerKg=1.6;
+  if(p.goal==='gain')proteinPerKg=2.0;
+  else if(p.goal==='lose')proteinPerKg=2.2;
+  const protein=Math.round(p.weight*proteinPerKg);
+  const fat=Math.round(p.weight*1.0);
+  const proteinCal=protein*4;
+  const fatCal=fat*9;
+  const carbsCal=calories-proteinCal-fatCal;
+  const carbs=Math.round(carbsCal/4);
+  return{protein,fat,carbs};
+}
+
+function calcCalories(ex, prefs){
+  const profile=getProfile();if(!profile)return 0;
+  const v=prefs[ex.id]||{sets:ex.sets,reps:ex.reps,weight:ex.weight};
+  const met=ex.met||5;
+  let minutes=0;
+  if(isCardio(ex)){minutes=ex.unit==='мин'?v.reps:v.reps/60;minutes*=v.sets;}
+  else{minutes=v.sets*2;}
+  return Math.round(met*profile.weight*(minutes/60));
+}
+
 function stepHtml(slug,label,steps){
   const first=steps[0];
   return `<div class="pose-card"><img data-slug="${slug}" data-step="${first}" data-steps="${steps.join(',')}" src="${IMG}${slug}-${first}.webp" onerror="imgFail(this)"><div class="pose-label">${label}</div></div>`;
@@ -165,8 +355,23 @@ function imgFail(el){
 }
 function visualHtml(e){
   if(e.t==='m')return `<div class="exercise-visual single">${stepHtml(e.slug,'ПОЗИЦИЯ',['main','start','peak'])}</div>`;
-  // старт грузит start, пик грузит peak — позы РАЗНЫЕ
   return `<div class="exercise-visual">${stepHtml(e.slug,'СТАРТ',['start','peak','main'])}${stepHtml(e.slug,'ПИК',['peak','start','main'])}</div>`;
+}
+
+function checkProfile(){
+  const p=getProfile();
+  if(!p){document.getElementById('regModal').classList.remove('hidden');}
+}
+function saveProfile(){
+  const w=parseFloat(document.getElementById('regWeight').value);
+  const h=parseFloat(document.getElementById('regHeight').value);
+  const a=parseInt(document.getElementById('regAge').value);
+  const g=document.getElementById('regGender').value;
+  const goal=document.getElementById('regGoal').value;
+  if(!w||!h||!a){alert('Заполни все поля');return;}
+  saveProfileData({weight:w,height:h,age:a,gender:g,goal:goal});
+  document.getElementById('regModal').classList.add('hidden');
+  hap('success');
 }
 
 function generate(){
@@ -213,7 +418,6 @@ function render(){
     }
     let steppers;
     if(isCardio(e)){
-      // Кардио: Раунды + Время (без веса)
       const step=e.unit==='мин'?1:5;
       steppers=`<div class="steppers two">
         <div class="stp"><div class="k">Раунды</div><div class="v">${v.sets}</div><div class="r"><button onclick="chg('${e.id}','sets',-1)">−</button><button onclick="chg('${e.id}','sets',1)">+</button></div></div>
@@ -257,23 +461,66 @@ function getLog(){try{return JSON.parse(localStorage.getItem('fit_log')||'{}')}c
 function setLog(l){localStorage.setItem('fit_log',JSON.stringify(l))}
 function logDay(){const l=getLog();const d=new Date().toISOString().slice(0,10);l[d]=(l[d]||0)+1;setLog(l);}
 function ring(cx,cy,r,pct,color){const c=2*Math.PI*r;return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="12"/><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="12" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-pct)}" transform="rotate(-90 ${cx} ${cy})"/>`;}
+
+function drawNutrition(){
+  const calories=calcDailyCalories();
+  const macros=calcMacros();
+  document.getElementById('dailyCalories').textContent=calories;
+  document.getElementById('proteinGrams').textContent=macros.protein+'г';
+  document.getElementById('fatGrams').textContent=macros.fat+'г';
+  document.getElementById('carbsGrams').textContent=macros.carbs+'г';
+  
+  const profile=getProfile();
+  const foods=[
+    {name:'Куриная грудка',detail:'165 ккал / 31г белка на 100г'},
+    {name:'Яйца',detail:'155 ккал / 13г белка на 100г'},
+    {name:'Творог 5%',detail:'121 ккал / 17г белка на 100г'},
+    {name:'Овсянка',detail:'389 ккал / 13г белка на 100г'},
+    {name:'Рис бурый',detail:'111 ккал / 2.6г белка на 100г'},
+    {name:'Гречка',detail:'132 ккал / 4.5г белка на 100г'},
+    {name:'Банан',detail:'89 ккал / 1.1г белка на 100г'},
+    {name:'Авокадо',detail:'160 ккал / 2г белка на 100г'},
+    {name:'Лосось',detail:'208 ккал / 20г белка на 100г'},
+    {name:'Миндаль',detail:'579 ккал / 21г белка на 100г'}
+  ];
+  document.getElementById('foodList').innerHTML=foods.map(f=>`<div class="food-item"><div class="food-name">${f.name}</div><div class="food-detail">${f.detail}</div></div>`).join('');
+  
+  const goalText={lose:'Для похудения держи дефицит 500 ккал. Ешь больше белка (2.2г/кг) для сохранения мышц. Избегай сахара и фастфуда.',maintain:'Для поддержания формы ешь по норме. Баланс БЖУ: 30% белки, 30% жиры, 40% углеводы.',gain:'Для набора массы ешь профицит 300 ккал. Увеличь углеводы для энергии. Ешь каждые 3-4 часа.',endurance:'Для выносливости увеличь углеводы до 50-60% рациона. Пей достаточно воды. Ешь перед тренировкой за 2 часа.'};
+  document.getElementById('nutritionTips').textContent=goalText[profile?.goal]||goalText.maintain;
+}
+
 function drawStats(){
   const l=getLog();const days=Object.keys(l);const total=days.reduce((s,d)=>s+l[d],0);
-  document.getElementById('r1').textContent=days.length;document.getElementById('r2').textContent=total*5;document.getElementById('r3').textContent=days.length;
-  const p1=Math.min(1,days.length/7),p2=Math.min(1,total/30),p3=Math.min(1,days.length/7);
+  document.getElementById('r1').textContent=days.length;
+  document.getElementById('r3').textContent=days.length;
+  const p1=Math.min(1,days.length/7),p3=Math.min(1,days.length/7);
+  const history=loadHistory();
+  let weekCalories=0;
+  const now=new Date();
+  for(let i=6;i>=0;i--){
+    const d=new Date(now);d.setDate(now.getDate()-i);
+    const k=d.toISOString().slice(0,10);
+    const session=history.find(h=>h.date===k);
+    if(session){allExercises.forEach(e=>{if(session.exercises[e.id])weekCalories+=calcCalories(e,session.exercises);});}
+  }
+  document.getElementById('r2').textContent=weekCalories;
+  const p2=Math.min(1,weekCalories/3000);
   document.getElementById('ringsSvg').innerHTML=ring(90,90,70,p1,'#e10600')+ring(90,90,52,p2,'#30d158')+ring(90,90,34,p3,'#00c7ff');
-  const svg=document.getElementById('chartSvg');const now=new Date();let bars='';
+  const svg=document.getElementById('chartSvg');let bars='';
   for(let i=6;i>=0;i--){const d=new Date(now);d.setDate(now.getDate()-i);const k=d.toISOString().slice(0,10);const v=l[k]||0;const h=Math.min(100,v*30);const x=10+(6-i)*42;bars+=`<rect x="${x}" y="${110-h}" width="30" height="${h}" rx="6" fill="${v?'#e10600':'rgba(255,255,255,.08)'}"/>`;bars+=`<text x="${x+15}" y="118" fill="#86868b" font-size="10" text-anchor="middle">${['вс','пн','вт','ср','чт','пт','сб'][d.getDay()]}</text>`;}
   svg.innerHTML=bars;
-  const history=loadHistory();const histBox=document.getElementById('historyList');
-  if(history.length===0){histBox.innerHTML='<div class="empty-history">Пока нет завершённых тренировок. Заверши первую — и она появится здесь.</div>';return;}
-  const reversed=[...history].reverse().slice(0,10);
-  histBox.innerHTML=reversed.map((h,idx)=>{
-    const dateObj=new Date(h.date);const dateStr=dateObj.toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
-    const exHtml=allExercises.filter(e=>h.exercises[e.id]).map(e=>{const v=h.exercises[e.id];const unit=isCardio(e)?(e.unit||'сек'):(e.id==='pl'?'сек':'повт');return `<div class="history-ex"><span class="n">${e.name}</span><span class="v">${v.sets}×${v.reps} ${unit}${(!isCardio(e)&&v.weight)?', '+v.weight+' кг':''}</span></div>`;}).join('');
-    return `<div class="history-card"><div class="history-date"><span>${dateStr}</span><span class="num">#${history.length-idx}</span></div>${exHtml}</div>`;
-  }).join('');
+  const calBox=document.getElementById('caloriesList');
+  if(history.length===0){calBox.innerHTML='<div class="empty-history">Заверши первую тренировку — и здесь появятся калории.</div>';}
+  else{const reversed=[...history].reverse().slice(0,10);calBox.innerHTML=reversed.map(h=>{const dateObj=new Date(h.date);const dateStr=dateObj.toLocaleDateString('ru-RU',{day:'numeric',month:'long'});let dayCal=0;allExercises.forEach(e=>{if(h.exercises[e.id])dayCal+=calcCalories(e,h.exercises);});return `<div class="history-ex"><span class="n">${dateStr}</span><span class="v" style="color:#30d158;font-weight:700">${dayCal} ккал</span></div>`;}).join('');}
+  const histBox=document.getElementById('historyList');
+  if(history.length===0){histBox.innerHTML='<div class="empty-history">Пока нет завершённых тренировок.</div>';return;}
+  const rev2=[...history].reverse().slice(0,10);
+  histBox.innerHTML=rev2.map((h,idx)=>{const dateObj=new Date(h.date);const dateStr=dateObj.toLocaleDateString('ru-RU',{day:'numeric',month:'long'});const exHtml=allExercises.filter(e=>h.exercises[e.id]).map(e=>{const v=h.exercises[e.id];const unit=isCardio(e)?(e.unit||'сек'):(e.id==='pl'?'сек':'повт');return `<div class="history-ex"><span class="n">${e.name}</span><span class="v">${v.sets}×${v.reps} ${unit}${(!isCardio(e)&&v.weight)?', '+v.weight+' кг':''}</span></div>`;}).join('');return `<div class="history-card"><div class="history-date"><span>${dateStr}</span><span class="num">#${history.length-idx}</span></div>${exHtml}</div>`;}).join('');
 }
+
+function buyTrainer(type){hap('medium');alert(type==='ai'?'ИИ-тренер: оплата через Telegram Payments (скоро)':'Живой тренер: оплата через Telegram Payments (скоро)');}
+
+checkProfile();
 </script>
 </body>
 </html>
