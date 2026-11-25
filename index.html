@@ -25,6 +25,7 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
 .btn.small{padding:8px 12px;font-size:12px;border-radius:10px;width:auto;margin-top:6px;margin-right:6px;display:inline-block}
 .btn.pyaterochka{background:#e30613}
 .btn.magnit{background:#00a651}
+.btn.locked{background:rgba(255,255,255,.1);color:#86868b;cursor:not-allowed}
 .ex{border-bottom:1px solid rgba(255,255,255,.07);padding:18px 0}.ex:last-child{border-bottom:none}
 .ex-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
 .ex-name{font-size:19px;font-weight:600}.ex-tag{font-size:11px;color:#e10600;font-weight:700;letter-spacing:.08em}
@@ -82,7 +83,7 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
 .cat-chip.active{background:#e10600;color:#fff;border-color:#e10600}
 .attribution{position:fixed;bottom:70px;right:10px;font-size:9px;color:rgba(255,255,255,.3);z-index:5;text-decoration:none}
 
-/* Модалка регистрации */
+/* Модалки */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(20px);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
 .modal{background:#1c1c1e;border-radius:20px;padding:28px 24px;width:100%;max-width:400px;border:1px solid rgba(255,255,255,.1);max-height:90vh;overflow-y:auto}
 .modal h2{font-size:22px;font-weight:700;margin-bottom:6px}
@@ -92,6 +93,17 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
 .form-group input,.form-group select{width:100%;background:#000;border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:12px;color:#f5f5f7;font-size:16px;font-family:inherit}
 .form-group input:focus,.form-group select:focus{outline:none;border-color:#e10600}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* Программы */
+.program-card{background:rgba(28,28,30,0.85);backdrop-filter:blur(12px);border-radius:18px;padding:22px;margin-bottom:14px;border:1px solid rgba(255,255,255,.1);cursor:pointer;transition:transform .2s}
+.program-card:active{transform:scale(0.98)}
+.program-card.selected{border-color:#e10600;background:rgba(225,6,0,0.1)}
+.program-icon{font-size:40px;margin-bottom:10px}
+.program-name{font-size:20px;font-weight:700;margin-bottom:4px}
+.program-desc{font-size:14px;color:#86868b;margin-bottom:12px;line-height:1.4}
+.program-stats{display:flex;gap:16px;font-size:12px;color:#86868b}
+.program-stats span{display:flex;align-items:center;gap:4px}
+.program-stats .dot{width:6px;height:6px;border-radius:50%;background:#e10600}
 
 /* Карточки тренеров */
 .trainer-card{background:rgba(28,28,30,0.85);backdrop-filter:blur(12px);border-radius:20px;padding:22px;margin-bottom:14px;border:1px solid rgba(255,255,255,.1);position:relative;overflow:hidden}
@@ -106,6 +118,7 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
 .trainer-features li{font-size:13px;color:#f5f5f7;padding:6px 0 6px 24px;position:relative}
 .trainer-features li::before{content:"✓";position:absolute;left:0;color:#30d158;font-weight:700}
 .trainer-card.ai .trainer-features li::before{color:#00c7ff}
+.trainer-badge{position:absolute;top:16px;right:16px;background:#30d158;color:#000;padding:4px 10px;border-radius:10px;font-size:11px;font-weight:700}
 
 /* Питание */
 .macro-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px}
@@ -135,6 +148,10 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
 .ingredient-actions{display:flex;gap:4px;flex-shrink:0}
 .copy-toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:#30d158;color:#000;padding:12px 24px;border-radius:12px;font-weight:600;font-size:14px;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none}
 .copy-toast.show{opacity:1}
+
+/* Lock overlay */
+.lock-overlay{position:relative}
+.lock-overlay::after{content:"🔒";position:absolute;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;font-size:48px;border-radius:18px}
 </style>
 </head>
 <body>
@@ -182,10 +199,26 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
 </div>
 
 <div id="tab-workout" class="tab active">
-  <h1>Тренировка</h1><p class="subtitle">Программа под твой профиль на сегодня</p>
-  <div id="intro" class="section"><div class="card"><h2>Статус</h2><p style="font-size:16px;line-height:1.45">Готов к старту. Настрой нагрузку и выполняй по картинкам.</p><button class="btn" onclick="generate()">Создать тренировку на сегодня для тебя</button></div></div>
-  <div id="loader" class="section hidden"><div class="loader"></div><p class="center">Формирование программы...</p></div>
-  <div id="program" class="section hidden"><div id="recBox"></div><div class="cat-filter" id="catFilter"></div><div class="card"><div id="exList"></div></div><button class="btn green" onclick="finish()">Завершить тренировку</button></div>
+  <h1>Тренировка</h1><p class="subtitle">Выбери программу или создай свою</p>
+  
+  <!-- Экран выбора программы -->
+  <div id="programSelect" class="section">
+    <div class="card" style="margin-bottom:14px">
+      <h2>Готовые программы</h2>
+      <p style="font-size:14px;color:#86868b;margin-bottom:14px">Выбери программу под свой уровень и цель</p>
+      <div id="programList"></div>
+    </div>
+    <button class="btn" onclick="startSelectedProgram()" id="startBtn" disabled>Начать тренировку</button>
+  </div>
+  
+  <!-- Экран тренировки -->
+  <div id="program" class="section hidden">
+    <button class="btn ghost" onclick="backToPrograms()" style="margin-bottom:14px">← Назад к программам</button>
+    <div id="recBox"></div>
+    <div class="card"><div id="exList"></div></div>
+    <button class="btn green" onclick="finish()">Завершить тренировку</button>
+  </div>
+  
   <div id="motivation" class="section hidden"><div class="card" style="text-align:center;padding:34px 22px"><h2 style="margin-bottom:20px">Финиш прямой</h2><div class="quote" id="quoteText"></div><div class="quote-author" id="quoteAuthor"></div><button class="btn" style="margin-top:26px" onclick="sendResult()">Отправить результат</button></div></div>
 </div>
 
@@ -224,22 +257,21 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
   <h1>Тренеры</h1>
   <p class="subtitle">Выбери свой уровень поддержки</p>
   <div class="section">
-    <div class="trainer-card ai">
+    <div class="trainer-card ai" id="aiTrainerCard">
       <div class="trainer-icon">🤖</div>
       <div class="trainer-name">ИИ-тренер</div>
       <div class="trainer-price">299 ₽ / месяц</div>
       <div class="trainer-desc">Персональный ИИ-наставник, который анализирует каждую твою тренировку и адаптирует программу в реальном времени.</div>
       <ul class="trainer-features">
-        <li>Доступен 24/7 — отвечает мгновенно</li>
+        <li>Персональная программа под твою цель</li>
+        <li>Автоматическая прогрессия нагрузки</li>
         <li>Анализирует историю и прогресс</li>
-        <li>Корректирует нагрузку после каждой тренировки</li>
-        <li>Отвечает на вопросы по технике</li>
+        <li>Рекомендации по дням тренировок</li>
         <li>Составляет план питания под цели</li>
-        <li>Работает на данных тысяч успешных атлетов</li>
       </ul>
-      <button class="btn premium" onclick="buyTrainer('ai')">Подключить ИИ-тренера</button>
+      <button class="btn premium" id="aiSubscribeBtn" onclick="subscribeTrainer('ai')">Оформить подписку</button>
     </div>
-    <div class="trainer-card human">
+    <div class="trainer-card human" id="humanTrainerCard">
       <div class="trainer-icon">👨‍🏫</div>
       <div class="trainer-name">Живой тренер</div>
       <div class="trainer-price">4 990 ₽ / месяц</div>
@@ -250,9 +282,8 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
         <li>Индивидуальная программа под цели</li>
         <li>Работа с травмами и ограничениями</li>
         <li>Мотивация и контроль дисциплины</li>
-        <li>Корректировка программы в реальном времени</li>
       </ul>
-      <button class="btn premium" onclick="buyTrainer('human')">Подключить живого тренера</button>
+      <button class="btn premium" id="humanSubscribeBtn" onclick="subscribeTrainer('human')">Оформить подписку</button>
     </div>
   </div>
 </div>
@@ -287,7 +318,7 @@ h1{font-size:32px;font-weight:700;letter-spacing:-.03em;margin:26px 20px 6px}
 <script>
 const tg=window.Telegram.WebApp;tg.expand();tg.ready();
 function hap(t){try{tg.HapticFeedback.impactOccurred(t||'light')}catch(e){}}
-function switchTab(id,b){hap('light');document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');b.classList.add('active');if(id==='stats')drawStats();if(id==='nutrition')drawNutrition();}
+function switchTab(id,b){hap('light');document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');b.classList.add('active');if(id==='stats')drawStats();if(id==='nutrition')drawNutrition();if(id==='trainers')updateTrainerUI();}
 
 const IMG='https://exercise-dataset.com/images/flat/';
 const allExercises=[
@@ -314,174 +345,71 @@ const allExercises=[
   {id:'ab',name:'Велотренажёр Air Bike',cat:'КАРДИО',tag:'КАРДИО',sets:1,reps:15,weight:0,slug:'air-bike',t:'m',unit:'мин',met:8.0}
 ];
 
+// ===== ПРОГРАММЫ =====
+const programs = [
+  {
+    id: 'quickstart',
+    name: 'Быстрый старт',
+    icon: '⚡',
+    desc: 'Идеально для новичков. 20 минут, всё тело.',
+    duration: '20 мин',
+    exercises: ['sq', 'pu', 'pl', 'mc'],
+    sets: 2,
+    difficulty: 'Начинающий'
+  },
+  {
+    id: 'strength',
+    name: 'Сила и масса',
+    icon: '💪',
+    desc: 'Акцент на ноги и грудь. 40 минут интенсивной работы.',
+    duration: '40 мин',
+    exercises: ['sq', 'bp', 'br', 'lu', 'sh'],
+    sets: 4,
+    difficulty: 'Продвинутый'
+  },
+  {
+    id: 'cardio',
+    name: 'Жиросжигание',
+    icon: '🔥',
+    desc: 'Кардио + кор. 30 минут высокого темпа.',
+    duration: '30 мин',
+    exercises: ['jj', 'mc', 'bcr', 'cr', 'pl'],
+    sets: 3,
+    difficulty: 'Средний'
+  }
+];
+
+let selectedProgram = null;
+let currentProgramExercises = [];
+
 // ===== БАЗА РЕЦЕПТОВ =====
-// Каждый рецепт: название, калории (базовые), БЖУ (базовые), ингредиенты с граммовками
 const recipes = {
   breakfast: [
-    {
-      name: 'Овсянка с бананом и мёдом',
-      kcal: 320, protein: 10, fat: 6, carbs: 58,
-      ingredients: [
-        {name: 'Овсяные хлопья', amount: 60, unit: 'г', category: 'Крупы', search: 'овсяные хлопья'},
-        {name: 'Молоко 2.5%', amount: 150, unit: 'мл', category: 'Молочные', search: 'молоко 2.5'},
-        {name: 'Банан', amount: 100, unit: 'г', category: 'Фрукты', search: 'банан'},
-        {name: 'Мёд', amount: 15, unit: 'г', category: 'Сладкое', search: 'мёд'}
-      ]
-    },
-    {
-      name: 'Яичница с тостом и авокадо',
-      kcal: 380, protein: 22, fat: 24, carbs: 18,
-      ingredients: [
-        {name: 'Яйца куриные', amount: 2, unit: 'шт', category: 'Яйца', search: 'яйца куриные С1'},
-        {name: 'Хлеб цельнозерновой', amount: 60, unit: 'г', category: 'Хлеб', search: 'хлеб цельнозерновой'},
-        {name: 'Авокадо', amount: 50, unit: 'г', category: 'Овощи', search: 'авокадо'},
-        {name: 'Масло оливковое', amount: 5, unit: 'мл', category: 'Масла', search: 'масло оливковое'}
-      ]
-    },
-    {
-      name: 'Творог с ягодами и орехами',
-      kcal: 290, protein: 28, fat: 12, carbs: 18,
-      ingredients: [
-        {name: 'Творог 5%', amount: 180, unit: 'г', category: 'Молочные', search: 'творог 5%'},
-        {name: 'Ягоды (черника/малина)', amount: 80, unit: 'г', category: 'Ягоды', search: 'ягоды замороженные'},
-        {name: 'Миндаль', amount: 20, unit: 'г', category: 'Орехи', search: 'миндаль'}
-      ]
-    },
-    {
-      name: 'Гречка с молоком и яблоком',
-      kcal: 340, protein: 12, fat: 5, carbs: 62,
-      ingredients: [
-        {name: 'Гречка', amount: 70, unit: 'г', category: 'Крупы', search: 'гречка'},
-        {name: 'Молоко 2.5%', amount: 150, unit: 'мл', category: 'Молочные', search: 'молоко 2.5'},
-        {name: 'Яблоко', amount: 150, unit: 'г', category: 'Фрукты', search: 'яблоко'}
-      ]
-    }
+    {name: 'Овсянка с бананом и мёдом', kcal: 320, protein: 10, fat: 6, carbs: 58, ingredients: [{name: 'Овсяные хлопья', amount: 60, unit: 'г', category: 'Крупы', search: 'овсяные хлопья'}, {name: 'Молоко 2.5%', amount: 150, unit: 'мл', category: 'Молочные', search: 'молоко 2.5'}, {name: 'Банан', amount: 100, unit: 'г', category: 'Фрукты', search: 'банан'}, {name: 'Мёд', amount: 15, unit: 'г', category: 'Сладкое', search: 'мёд'}]},
+    {name: 'Яичница с тостом и авокадо', kcal: 380, protein: 22, fat: 24, carbs: 18, ingredients: [{name: 'Яйца куриные', amount: 2, unit: 'шт', category: 'Яйца', search: 'яйца куриные С1'}, {name: 'Хлеб цельнозерновой', amount: 60, unit: 'г', category: 'Хлеб', search: 'хлеб цельнозерновой'}, {name: 'Авокадо', amount: 50, unit: 'г', category: 'Овощи', search: 'авокадо'}, {name: 'Масло оливковое', amount: 5, unit: 'мл', category: 'Масла', search: 'масло оливковое'}]},
+    {name: 'Творог с ягодами и орехами', kcal: 290, protein: 28, fat: 12, carbs: 18, ingredients: [{name: 'Творог 5%', amount: 180, unit: 'г', category: 'Молочные', search: 'творог 5%'}, {name: 'Ягоды (черника/малина)', amount: 80, unit: 'г', category: 'Ягоды', search: 'ягоды замороженные'}, {name: 'Миндаль', amount: 20, unit: 'г', category: 'Орехи', search: 'миндаль'}]},
+    {name: 'Гречка с молоком и яблоком', kcal: 340, protein: 12, fat: 5, carbs: 62, ingredients: [{name: 'Гречка', amount: 70, unit: 'г', category: 'Крупы', search: 'гречка'}, {name: 'Молоко 2.5%', amount: 150, unit: 'мл', category: 'Молочные', search: 'молоко 2.5'}, {name: 'Яблоко', amount: 150, unit: 'г', category: 'Фрукты', search: 'яблоко'}]}
   ],
   lunch: [
-    {
-      name: 'Куриная грудка с рисом и овощами',
-      kcal: 520, protein: 45, fat: 10, carbs: 58,
-      ingredients: [
-        {name: 'Куриное филе', amount: 160, unit: 'г', category: 'Мясо', search: 'куриное филе'},
-        {name: 'Рис бурый', amount: 80, unit: 'г', category: 'Крупы', search: 'рис бурый'},
-        {name: 'Овощи (брокколи/морковь)', amount: 150, unit: 'г', category: 'Овощи', search: 'брокколи'},
-        {name: 'Масло оливковое', amount: 10, unit: 'мл', category: 'Масла', search: 'масло оливковое'}
-      ]
-    },
-    {
-      name: 'Говядина с гречкой и салатом',
-      kcal: 580, protein: 42, fat: 18, carbs: 60,
-      ingredients: [
-        {name: 'Говядина (вырезка)', amount: 150, unit: 'г', category: 'Мясо', search: 'говядина вырезка'},
-        {name: 'Гречка', amount: 80, unit: 'г', category: 'Крупы', search: 'гречка'},
-        {name: 'Огурцы', amount: 100, unit: 'г', category: 'Овощи', search: 'огурцы'},
-        {name: 'Помидоры', amount: 100, unit: 'г', category: 'Овощи', search: 'помидоры'},
-        {name: 'Масло оливковое', amount: 10, unit: 'мл', category: 'Масла', search: 'масло оливковое'}
-      ]
-    },
-    {
-      name: 'Рыба (треска) с картофелем',
-      kcal: 490, protein: 38, fat: 8, carbs: 65,
-      ingredients: [
-        {name: 'Филе трески', amount: 170, unit: 'г', category: 'Рыба', search: 'филе трески'},
-        {name: 'Картофель', amount: 220, unit: 'г', category: 'Овощи', search: 'картофель'},
-        {name: 'Лимон', amount: 30, unit: 'г', category: 'Фрукты', search: 'лимон'},
-        {name: 'Масло оливковое', amount: 10, unit: 'мл', category: 'Масла', search: 'масло оливковое'}
-      ]
-    },
-    {
-      name: 'Курица с макаронами и томатным соусом',
-      kcal: 540, protein: 42, fat: 12, carbs: 62,
-      ingredients: [
-        {name: 'Куриное филе', amount: 150, unit: 'г', category: 'Мясо', search: 'куриное филе'},
-        {name: 'Макароны (твёрдые сорта)', amount: 80, unit: 'г', category: 'Крупы', search: 'макароны твердые сорта'},
-        {name: 'Томатная паста', amount: 40, unit: 'г', category: 'Соусы', search: 'томатная паста'},
-        {name: 'Чеснок', amount: 5, unit: 'г', category: 'Овощи', search: 'чеснок'}
-      ]
-    }
+    {name: 'Куриная грудка с рисом и овощами', kcal: 520, protein: 45, fat: 10, carbs: 58, ingredients: [{name: 'Куриное филе', amount: 160, unit: 'г', category: 'Мясо', search: 'куриное филе'}, {name: 'Рис бурый', amount: 80, unit: 'г', category: 'Крупы', search: 'рис бурый'}, {name: 'Овощи (брокколи/морковь)', amount: 150, unit: 'г', category: 'Овощи', search: 'брокколи'}, {name: 'Масло оливковое', amount: 10, unit: 'мл', category: 'Масла', search: 'масло оливковое'}]},
+    {name: 'Говядина с гречкой и салатом', kcal: 580, protein: 42, fat: 18, carbs: 60, ingredients: [{name: 'Говядина (вырезка)', amount: 150, unit: 'г', category: 'Мясо', search: 'говядина вырезка'}, {name: 'Гречка', amount: 80, unit: 'г', category: 'Крупы', search: 'гречка'}, {name: 'Огурцы', amount: 100, unit: 'г', category: 'Овощи', search: 'огурцы'}, {name: 'Помидоры', amount: 100, unit: 'г', category: 'Овощи', search: 'помидоры'}, {name: 'Масло оливковое', amount: 10, unit: 'мл', category: 'Масла', search: 'масло оливковое'}]},
+    {name: 'Рыба (треска) с картофелем', kcal: 490, protein: 38, fat: 8, carbs: 65, ingredients: [{name: 'Филе трески', amount: 170, unit: 'г', category: 'Рыба', search: 'филе трески'}, {name: 'Картофель', amount: 220, unit: 'г', category: 'Овощи', search: 'картофель'}, {name: 'Лимон', amount: 30, unit: 'г', category: 'Фрукты', search: 'лимон'}, {name: 'Масло оливковое', amount: 10, unit: 'мл', category: 'Масла', search: 'масло оливковое'}]},
+    {name: 'Курица с макаронами и томатным соусом', kcal: 540, protein: 42, fat: 12, carbs: 62, ingredients: [{name: 'Куриное филе', amount: 150, unit: 'г', category: 'Мясо', search: 'куриное филе'}, {name: 'Макароны (твёрдые сорта)', amount: 80, unit: 'г', category: 'Крупы', search: 'макароны твердые сорта'}, {name: 'Томатная паста', amount: 40, unit: 'г', category: 'Соусы', search: 'томатная паста'}, {name: 'Чеснок', amount: 5, unit: 'г', category: 'Овощи', search: 'чеснок'}]}
   ],
   snack: [
-    {
-      name: 'Яблоко с миндалём',
-      kcal: 210, protein: 6, fat: 12, carbs: 22,
-      ingredients: [
-        {name: 'Яблоко', amount: 200, unit: 'г', category: 'Фрукты', search: 'яблоко'},
-        {name: 'Миндаль', amount: 25, unit: 'г', category: 'Орехи', search: 'миндаль'}
-      ]
-    },
-    {
-      name: 'Йогурт с бананом',
-      kcal: 190, protein: 10, fat: 4, carbs: 30,
-      ingredients: [
-        {name: 'Йогурт натуральный', amount: 200, unit: 'г', category: 'Молочные', search: 'йогурт натуральный'},
-        {name: 'Банан', amount: 100, unit: 'г', category: 'Фрукты', search: 'банан'}
-      ]
-    },
-    {
-      name: 'Творог с мёдом',
-      kcal: 170, protein: 20, fat: 5, carbs: 12,
-      ingredients: [
-        {name: 'Творог 5%', amount: 150, unit: 'г', category: 'Молочные', search: 'творог 5%'},
-        {name: 'Мёд', amount: 15, unit: 'г', category: 'Сладкое', search: 'мёд'}
-      ]
-    },
-    {
-      name: 'Бутерброд с сыром и овощами',
-      kcal: 230, protein: 12, fat: 10, carbs: 24,
-      ingredients: [
-        {name: 'Хлеб цельнозерновой', amount: 60, unit: 'г', category: 'Хлеб', search: 'хлеб цельнозерновой'},
-        {name: 'Сыр твёрдый', amount: 30, unit: 'г', category: 'Молочные', search: 'сыр твёрдый'},
-        {name: 'Огурцы', amount: 50, unit: 'г', category: 'Овощи', search: 'огурцы'}
-      ]
-    }
+    {name: 'Яблоко с миндалём', kcal: 210, protein: 6, fat: 12, carbs: 22, ingredients: [{name: 'Яблоко', amount: 200, unit: 'г', category: 'Фрукты', search: 'яблоко'}, {name: 'Миндаль', amount: 25, unit: 'г', category: 'Орехи', search: 'миндаль'}]},
+    {name: 'Йогурт с бананом', kcal: 190, protein: 10, fat: 4, carbs: 30, ingredients: [{name: 'Йогурт натуральный', amount: 200, unit: 'г', category: 'Молочные', search: 'йогурт натуральный'}, {name: 'Банан', amount: 100, unit: 'г', category: 'Фрукты', search: 'банан'}]},
+    {name: 'Творог с мёдом', kcal: 170, protein: 20, fat: 5, carbs: 12, ingredients: [{name: 'Творог 5%', amount: 150, unit: 'г', category: 'Молочные', search: 'творог 5%'}, {name: 'Мёд', amount: 15, unit: 'г', category: 'Сладкое', search: 'мёд'}]},
+    {name: 'Бутерброд с сыром и овощами', kcal: 230, protein: 12, fat: 10, carbs: 24, ingredients: [{name: 'Хлеб цельнозерновой', amount: 60, unit: 'г', category: 'Хлеб', search: 'хлеб цельнозерновой'}, {name: 'Сыр твёрдый', amount: 30, unit: 'г', category: 'Молочные', search: 'сыр твёрдый'}, {name: 'Огурцы', amount: 50, unit: 'г', category: 'Овощи', search: 'огурцы'}]}
   ],
   dinner: [
-    {
-      name: 'Запечённая рыба с овощами',
-      kcal: 410, protein: 38, fat: 18, carbs: 22,
-      ingredients: [
-        {name: 'Филе лосося/форели', amount: 160, unit: 'г', category: 'Рыба', search: 'филе лосося'},
-        {name: 'Кабачок', amount: 150, unit: 'г', category: 'Овощи', search: 'кабачок'},
-        {name: 'Помидоры черри', amount: 100, unit: 'г', category: 'Овощи', search: 'помидоры черри'},
-        {name: 'Масло оливковое', amount: 10, unit: 'мл', category: 'Масла', search: 'масло оливковое'}
-      ]
-    },
-    {
-      name: 'Куриная грудка с салатом',
-      kcal: 380, protein: 42, fat: 14, carbs: 18,
-      ingredients: [
-        {name: 'Куриное филе', amount: 160, unit: 'г', category: 'Мясо', search: 'куриное филе'},
-        {name: 'Листья салата', amount: 80, unit: 'г', category: 'Овощи', search: 'салат листовой'},
-        {name: 'Огурцы', amount: 100, unit: 'г', category: 'Овощи', search: 'огурцы'},
-        {name: 'Помидоры', amount: 100, unit: 'г', category: 'Овощи', search: 'помидоры'},
-        {name: 'Масло оливковое', amount: 10, unit: 'мл', category: 'Масла', search: 'масло оливковое'}
-      ]
-    },
-    {
-      name: 'Омлет с овощами и сыром',
-      kcal: 360, protein: 28, fat: 22, carbs: 12,
-      ingredients: [
-        {name: 'Яйца куриные', amount: 3, unit: 'шт', category: 'Яйца', search: 'яйца куриные С1'},
-        {name: 'Молоко 2.5%', amount: 50, unit: 'мл', category: 'Молочные', search: 'молоко 2.5'},
-        {name: 'Сыр твёрдый', amount: 30, unit: 'г', category: 'Молочные', search: 'сыр твёрдый'},
-        {name: 'Помидоры', amount: 80, unit: 'г', category: 'Овощи', search: 'помидоры'},
-        {name: 'Шпинат', amount: 50, unit: 'г', category: 'Овощи', search: 'шпинат'}
-      ]
-    },
-    {
-      name: 'Творог с овощами и зеленью',
-      kcal: 320, protein: 30, fat: 14, carbs: 16,
-      ingredients: [
-        {name: 'Творог 5%', amount: 200, unit: 'г', category: 'Молочные', search: 'творог 5%'},
-        {name: 'Огурцы', amount: 100, unit: 'г', category: 'Овощи', search: 'огурцы'},
-        {name: 'Зелень (укроп/петрушка)', amount: 20, unit: 'г', category: 'Овощи', search: 'зелень укроп'},
-        {name: 'Сметана 15%', amount: 30, unit: 'г', category: 'Молочные', search: 'сметана 15%'}
-      ]
-    }
+    {name: 'Запечённая рыба с овощами', kcal: 410, protein: 38, fat: 18, carbs: 22, ingredients: [{name: 'Филе лосося/форели', amount: 160, unit: 'г', category: 'Рыба', search: 'филе лосося'}, {name: 'Кабачок', amount: 150, unit: 'г', category: 'Овощи', search: 'кабачок'}, {name: 'Помидоры черри', amount: 100, unit: 'г', category: 'Овощи', search: 'помидоры черри'}, {name: 'Масло оливковое', amount: 10, unit: 'мл', category: 'Масла', search: 'масло оливковое'}]},
+    {name: 'Куриная грудка с салатом', kcal: 380, protein: 42, fat: 14, carbs: 18, ingredients: [{name: 'Куриное филе', amount: 160, unit: 'г', category: 'Мясо', search: 'куриное филе'}, {name: 'Листья салата', amount: 80, unit: 'г', category: 'Овощи', search: 'салат листовой'}, {name: 'Огурцы', amount: 100, unit: 'г', category: 'Овощи', search: 'огурцы'}, {name: 'Помидоры', amount: 100, unit: 'г', category: 'Овощи', search: 'помидоры'}, {name: 'Масло оливковое', amount: 10, unit: 'мл', category: 'Масла', search: 'масло оливковое'}]},
+    {name: 'Омлет с овощами и сыром', kcal: 360, protein: 28, fat: 22, carbs: 12, ingredients: [{name: 'Яйца куриные', amount: 3, unit: 'шт', category: 'Яйца', search: 'яйца куриные С1'}, {name: 'Молоко 2.5%', amount: 50, unit: 'мл', category: 'Молочные', search: 'молоко 2.5'}, {name: 'Сыр твёрдый', amount: 30, unit: 'г', category: 'Молочные', search: 'сыр твёрдый'}, {name: 'Помидоры', amount: 80, unit: 'г', category: 'Овощи', search: 'помидоры'}, {name: 'Шпинат', amount: 50, unit: 'г', category: 'Овощи', search: 'шпинат'}]},
+    {name: 'Творог с овощами и зеленью', kcal: 320, protein: 30, fat: 14, carbs: 16, ingredients: [{name: 'Творог 5%', amount: 200, unit: 'г', category: 'Молочные', search: 'творог 5%'}, {name: 'Огурцы', amount: 100, unit: 'г', category: 'Овощи', search: 'огурцы'}, {name: 'Зелень (укроп/петрушка)', amount: 20, unit: 'г', category: 'Овощи', search: 'зелень укроп'}, {name: 'Сметана 15%', amount: 30, unit: 'г', category: 'Молочные', search: 'сметана 15%'}]}
   ]
 };
 
-let currentCat='ВСЕ';
 const isCardio=e=>e.cat==='КАРДИО';
 function loadPrefs(){try{return JSON.parse(localStorage.getItem('fit_prefs')||'{}')}catch(e){return{}}}
 function savePrefs(p){localStorage.setItem('fit_prefs',JSON.stringify(p))}
@@ -490,6 +418,8 @@ function saveHistory(h){localStorage.setItem('fit_history',JSON.stringify(h))}
 function getLastSession(){const h=loadHistory();return h.length?h[h.length-1]:null}
 function getProfile(){try{return JSON.parse(localStorage.getItem('fit_profile')||'null')}catch(e){return null}}
 function saveProfileData(p){localStorage.setItem('fit_profile',JSON.stringify(p))}
+function getSubscription(){try{return JSON.parse(localStorage.getItem('fit_subscription')||'{}')}catch(e){return{}}}
+function saveSubscription(s){localStorage.setItem('fit_subscription',JSON.stringify(s))}
 
 // Формула Миффлина-Сан Жеора
 function calcDailyCalories(){
@@ -546,6 +476,7 @@ function visualHtml(e){
 function checkProfile(){
   const p=getProfile();
   if(!p){document.getElementById('regModal').classList.remove('hidden');}
+  else{renderPrograms();}
 }
 function saveProfile(){
   const w=parseFloat(document.getElementById('regWeight').value);
@@ -556,44 +487,113 @@ function saveProfile(){
   if(!w||!h||!a){alert('Заполни все поля');return;}
   saveProfileData({weight:w,height:h,age:a,gender:g,goal:goal});
   document.getElementById('regModal').classList.add('hidden');
+  renderPrograms();
   hap('success');
 }
 
-function generate(){
+// ===== ПРОГРАММЫ =====
+function renderPrograms(){
+  const sub = getSubscription();
+  document.getElementById('programList').innerHTML = programs.map(p => `
+    <div class="program-card ${selectedProgram===p.id?'selected':''}" onclick="selectProgram('${p.id}')">
+      <div class="program-icon">${p.icon}</div>
+      <div class="program-name">${p.name}</div>
+      <div class="program-desc">${p.desc}</div>
+      <div class="program-stats">
+        <span><span class="dot"></span>${p.duration}</span>
+        <span><span class="dot"></span>${p.exercises.length} упражнений</span>
+        <span><span class="dot"></span>${p.difficulty}</span>
+      </div>
+    </div>
+  `).join('');
+  
+  // Если есть подписка ИИ — добавляем карточку ИИ-программы
+  if(sub.ai){
+    document.getElementById('programList').innerHTML += `
+      <div class="program-card ${selectedProgram==='ai'?'selected':''}" onclick="selectProgram('ai')" style="border-color:#00c7ff">
+        <div class="program-icon">🤖</div>
+        <div class="program-name">ИИ-программа</div>
+        <div class="program-desc">Персональная программа под твою цель с автоматической прогрессией</div>
+        <div class="program-stats">
+          <span><span class="dot" style="background:#00c7ff"></span>Адаптивная</span>
+          <span><span class="dot" style="background:#00c7ff"></span>Прогрессия</span>
+        </div>
+      </div>
+    `;
+  }
+  
+  document.getElementById('startBtn').disabled = !selectedProgram;
+}
+
+function selectProgram(id){
+  selectedProgram = id;
+  renderPrograms();
+  hap('light');
+}
+
+function startSelectedProgram(){
+  if(!selectedProgram){alert('Выбери программу');return;}
   hap('medium');
-  document.getElementById('intro').classList.add('hidden');
-  document.getElementById('loader').classList.remove('hidden');
-  setTimeout(()=>{document.getElementById('loader').classList.add('hidden');document.getElementById('program').classList.remove('hidden');renderCats();renderRecs();render();hap('success');},900);
+  
+  if(selectedProgram === 'ai'){
+    // ИИ-программа — генерируем на основе цели
+    generateAIProgram();
+  } else {
+    // Стандартная программа
+    const program = programs.find(p => p.id === selectedProgram);
+    currentProgramExercises = program.exercises.map(exId => {
+      const ex = allExercises.find(e => e.id === exId);
+      return {...ex, sets: program.sets};
+    });
+  }
+  
+  document.getElementById('programSelect').classList.add('hidden');
+  document.getElementById('program').classList.remove('hidden');
+  renderRecs();
+  renderExercises();
 }
-function renderCats(){
-  const cats=['ВСЕ',...new Set(allExercises.map(e=>e.cat))];
-  document.getElementById('catFilter').innerHTML=cats.map(c=>`<button class="cat-chip${c===currentCat?' active':''}" onclick="setCat('${c}')">${c}</button>`).join('');
-}
-function setCat(c){currentCat=c;hap('light');renderCats();render()}
 
-function getRecommendation(){
-  const h=loadHistory();if(h.length<2)return null;
-  const last=h[h.length-1],prev=h[h.length-2];
-  const daysDiff=Math.max(1,(new Date(last.date)-new Date(prev.date))/(1000*60*60*24));
-  let totalChange=0,count=0;
-  allExercises.forEach(e=>{
-    const lv=last.exercises[e.id]||{sets:e.sets,reps:e.reps,weight:e.weight};
-    const pv=prev.exercises[e.id]||{sets:e.sets,reps:e.reps,weight:e.weight};
-    const lvT=lv.sets*lv.reps*(lv.weight||1);const pvT=pv.sets*pv.reps*(pv.weight||1);
-    if(pvT>0){totalChange+=(lvT-pvT)/pvT;count++}
+function generateAIProgram(){
+  const profile = getProfile();
+  if(!profile){alert('Заполни профиль');return;}
+  
+  // Логика ИИ: подбираем упражнения под цель
+  let exerciseIds = [];
+  if(profile.goal === 'lose'){
+    // Похудение — больше кардио
+    exerciseIds = ['jj', 'mc', 'bcr', 'sq', 'cr'];
+  } else if(profile.goal === 'gain'){
+    // Масса — больше силовых
+    exerciseIds = ['sq', 'bp', 'br', 'lu', 'sh'];
+  } else if(profile.goal === 'endurance'){
+    // Выносливость — кардио + кор
+    exerciseIds = ['run', 'mc', 'pl', 'jj', 'bc'];
+  } else {
+    // Поддержание — микс
+    exerciseIds = ['sq', 'pu', 'pl', 'mc', 'cr'];
+  }
+  
+  // Прогрессия: если есть история — увеличиваем нагрузку
+  const history = loadHistory();
+  const lastSession = history.length ? history[history.length - 1] : null;
+  const baseSets = lastSession ? 3 : 2;
+  
+  currentProgramExercises = exerciseIds.map(exId => {
+    const ex = allExercises.find(e => e.id === exId);
+    return {...ex, sets: baseSets};
   });
-  const wk=count>0?(totalChange/count)*(7/daysDiff):0;
-  if(wk>0.15)return{type:'danger',title:'⚠️ Слишком быстрый прогресс',text:'Рост нагрузки >15% в неделю — риск травмы. Добавляй не более 10% в неделю.'};
-  if(wk<-0.05)return{type:'warn',title:'📉 Пора добавить нагрузку',text:'2+ недели без роста. Мышцы адаптировались. Добавь 1-2 повтора или +2.5 кг.'};
-  if(wk>=0.03&&wk<=0.1)return{type:'good',title:'🔥 Отличный темп!',text:'Рост 3-10% в неделю — идеальная зона прогресса без риска травм.'};
-  return null;
 }
-function renderRecs(){const rec=getRecommendation();const box=document.getElementById('recBox');if(!rec){box.innerHTML='';return}box.innerHTML=`<div class="rec-box ${rec.type}"><div class="rec-title">${rec.title}</div><div class="rec-text">${rec.text}</div></div>`;}
 
-function render(){
+function backToPrograms(){
+  document.getElementById('program').classList.add('hidden');
+  document.getElementById('programSelect').classList.remove('hidden');
+  selectedProgram = null;
+  renderPrograms();
+}
+
+function renderExercises(){
   const prefs=loadPrefs();const last=getLastSession();
-  const filtered=currentCat==='ВСЕ'?allExercises:allExercises.filter(e=>e.cat===currentCat);
-  document.getElementById('exList').innerHTML=filtered.map(e=>{
+  document.getElementById('exList').innerHTML=currentProgramExercises.map(e=>{
     const v=prefs[e.id]||{sets:e.sets,reps:e.reps,weight:e.weight};
     const unit=isCardio(e)?(e.unit||'сек'):(e.id==='pl'?'сек':'повт');
     let lastInfo='';
@@ -621,14 +621,34 @@ function render(){
     </div>`;
   }).join('');
 }
-function loadLast(id){hap('medium');const last=getLastSession();if(!last||!last.exercises[id])return;const lv=last.exercises[id];const prefs=loadPrefs();prefs[id]={sets:lv.sets,reps:lv.reps,weight:lv.weight};savePrefs(prefs);render();}
-function chg(id,key,delta){hap('light');const p=loadPrefs();const e=allExercises.find(x=>x.id===id);const v=p[id]||{sets:e.sets,reps:e.reps,weight:e.weight};const min=isCardio(e)?(e.unit==='мин'?1:5):1;v[key]=Math.max(key==='weight'?0:min,v[key]+delta);p[id]=v;savePrefs(p);render();}
+
+function getRecommendation(){
+  const h=loadHistory();if(h.length<2)return null;
+  const last=h[h.length-1],prev=h[h.length-2];
+  const daysDiff=Math.max(1,(new Date(last.date)-new Date(prev.date))/(1000*60*60*24));
+  let totalChange=0,count=0;
+  currentProgramExercises.forEach(e=>{
+    const lv=last.exercises[e.id]||{sets:e.sets,reps:e.reps,weight:e.weight};
+    const pv=prev.exercises[e.id]||{sets:e.sets,reps:e.reps,weight:e.weight};
+    const lvT=lv.sets*lv.reps*(lv.weight||1);const pvT=pv.sets*pv.reps*(pv.weight||1);
+    if(pvT>0){totalChange+=(lvT-pvT)/pvT;count++}
+  });
+  const wk=count>0?(totalChange/count)*(7/daysDiff):0;
+  if(wk>0.15)return{type:'danger',title:'⚠️ Слишком быстрый прогресс',text:'Рост нагрузки >15% в неделю — риск травмы. Добавляй не более 10% в неделю.'};
+  if(wk<-0.05)return{type:'warn',title:'📉 Пора добавить нагрузку',text:'2+ недели без роста. Мышцы адаптировались. Добавь 1-2 повтора или +2.5 кг.'};
+  if(wk>=0.03&&wk<=0.1)return{type:'good',title:'🔥 Отличный темп!',text:'Рост 3-10% в неделю — идеальная зона прогресса без риска травм.'};
+  return null;
+}
+function renderRecs(){const rec=getRecommendation();const box=document.getElementById('recBox');if(!rec){box.innerHTML='';return}box.innerHTML=`<div class="rec-box ${rec.type}"><div class="rec-title">${rec.title}</div><div class="rec-text">${rec.text}</div></div>`;}
+
+function loadLast(id){hap('medium');const last=getLastSession();if(!last||!last.exercises[id])return;const lv=last.exercises[id];const prefs=loadPrefs();prefs[id]={sets:lv.sets,reps:lv.reps,weight:lv.weight};savePrefs(prefs);renderExercises();}
+function chg(id,key,delta){hap('light');const p=loadPrefs();const e=currentProgramExercises.find(x=>x.id===id);const v=p[id]||{sets:e.sets,reps:e.reps,weight:e.weight};const min=isCardio(e)?(e.unit==='мин'?1:5):1;v[key]=Math.max(key==='weight'?0:min,v[key]+delta);p[id]=v;savePrefs(p);renderExercises();}
 
 function finish(){
   hap('success');
   const prefs=loadPrefs();const history=loadHistory();const today=new Date().toISOString().slice(0,10);
-  const idx=history.findIndex(h=>h.date===today);const session={date:today,exercises:{}};
-  allExercises.forEach(e=>{session.exercises[e.id]=prefs[e.id]||{sets:e.sets,reps:e.reps,weight:e.weight};});
+  const idx=history.findIndex(h=>h.date===today);const session={date:today,exercises:{},program:selectedProgram};
+  currentProgramExercises.forEach(e=>{session.exercises[e.id]=prefs[e.id]||{sets:e.sets,reps:e.reps,weight:e.weight};});
   if(idx>=0)history[idx]=session;else history.push(session);saveHistory(history);
   document.getElementById('program').classList.add('hidden');document.getElementById('motivation').classList.remove('hidden');
   const q=quotes[Math.floor(Math.random()*quotes.length)];
@@ -651,18 +671,13 @@ function ring(cx,cy,r,pct,color){const c=2*Math.PI*r;return `<circle cx="${cx}" 
 let currentMenu = null;
 
 function regenerateMenu(){
-  // Выбираем случайный рецепт из каждой категории
   currentMenu = {
     breakfast: recipes.breakfast[Math.floor(Math.random()*recipes.breakfast.length)],
     lunch: recipes.lunch[Math.floor(Math.random()*recipes.lunch.length)],
     snack: recipes.snack[Math.floor(Math.random()*recipes.snack.length)],
     dinner: recipes.dinner[Math.floor(Math.random()*recipes.dinner.length)]
   };
-  // Сохраняем в localStorage чтобы не менялось при переключении вкладок
-  localStorage.setItem('fit_menu', JSON.stringify({
-    date: new Date().toISOString().slice(0,10),
-    menu: currentMenu
-  }));
+  localStorage.setItem('fit_menu', JSON.stringify({date: new Date().toISOString().slice(0,10), menu: currentMenu}));
   renderMeals();
   hap('success');
 }
@@ -671,106 +686,44 @@ function loadMenu(){
   const saved = localStorage.getItem('fit_menu');
   if(saved){
     const data = JSON.parse(saved);
-    if(data.date === new Date().toISOString().slice(0,10)){
-      currentMenu = data.menu;
-      return;
-    }
+    if(data.date === new Date().toISOString().slice(0,10)){currentMenu = data.menu;return;}
   }
   regenerateMenu();
 }
 
 function scaleRecipe(recipe, targetKcal){
   const factor = targetKcal / recipe.kcal;
-  return {
-    name: recipe.name,
-    kcal: Math.round(recipe.kcal * factor),
-    protein: Math.round(recipe.protein * factor),
-    fat: Math.round(recipe.fat * factor),
-    carbs: Math.round(recipe.carbs * factor),
-    ingredients: recipe.ingredients.map(ing => ({
-      ...ing,
-      amount: Math.round(ing.amount * factor * 10) / 10
-    }))
-  };
+  return {name: recipe.name, kcal: Math.round(recipe.kcal * factor), protein: Math.round(recipe.protein * factor), fat: Math.round(recipe.fat * factor), carbs: Math.round(recipe.carbs * factor), ingredients: recipe.ingredients.map(ing => ({...ing, amount: Math.round(ing.amount * factor * 10) / 10}))};
 }
 
 function renderMeals(){
   if(!currentMenu) loadMenu();
-  const profile = getProfile();
   const dailyKcal = calcDailyCalories();
-  
-  // Распределение калорий по приёмам пищи
-  const mealTargets = {
-    breakfast: Math.round(dailyKcal * 0.27),
-    lunch: Math.round(dailyKcal * 0.38),
-    snack: Math.round(dailyKcal * 0.12),
-    dinner: Math.round(dailyKcal * 0.23)
-  };
-  
+  const mealTargets = {breakfast: Math.round(dailyKcal * 0.27), lunch: Math.round(dailyKcal * 0.38), snack: Math.round(dailyKcal * 0.12), dinner: Math.round(dailyKcal * 0.23)};
   const mealNames = {breakfast: 'Завтрак', lunch: 'Обед', snack: 'Перекус', dinner: 'Ужин'};
   const mealIcons = {breakfast: '🌅', lunch: '☀️', snack: '🍎', dinner: '🌙'};
-  
   const container = document.getElementById('mealsContainer');
   container.innerHTML = Object.keys(currentMenu).map(mealKey => {
     const scaled = scaleRecipe(currentMenu[mealKey], mealTargets[mealKey]);
     const ingredientsHtml = scaled.ingredients.map(ing => {
       const amountStr = ing.amount % 1 === 0 ? ing.amount : ing.amount.toFixed(1);
-      return `
-        <div class="ingredient">
-          <div class="ingredient-info">
-            <div class="ingredient-name">${ing.name}</div>
-            <div class="ingredient-amount">${amountStr} ${ing.unit}</div>
-          </div>
-          <div class="ingredient-actions">
-            <button class="btn small pyaterochka" onclick="openStore('pyaterochka','${ing.search}')">🛒 5ка</button>
-            <button class="btn small magnit" onclick="openStore('magnit','${ing.search}')">🛒 Магнит</button>
-          </div>
-        </div>
-      `;
+      return `<div class="ingredient"><div class="ingredient-info"><div class="ingredient-name">${ing.name}</div><div class="ingredient-amount">${amountStr} ${ing.unit}</div></div><div class="ingredient-actions"><button class="btn small pyaterochka" onclick="openStore('pyaterochka','${ing.search}')">🛒 5ка</button><button class="btn small magnit" onclick="openStore('magnit','${ing.search}')">🛒 Магнит</button></div></div>`;
     }).join('');
-    
-    return `
-      <div class="meal-card">
-        <div class="meal-header">
-          <div class="meal-name">${mealIcons[mealKey]} ${mealNames[mealKey]}</div>
-          <div class="meal-kcal">${scaled.kcal} ккал</div>
-        </div>
-        <div style="font-size:14px;color:#f5f5f7;margin-bottom:10px;font-weight:500">${scaled.name}</div>
-        <div class="meal-macros">
-          <span><span class="dot p"></span>Б ${scaled.protein}г</span>
-          <span><span class="dot f"></span>Ж ${scaled.fat}г</span>
-          <span><span class="dot c"></span>У ${scaled.carbs}г</span>
-        </div>
-        ${ingredientsHtml}
-      </div>
-    `;
+    return `<div class="meal-card"><div class="meal-header"><div class="meal-name">${mealIcons[mealKey]} ${mealNames[mealKey]}</div><div class="meal-kcal">${scaled.kcal} ккал</div></div><div style="font-size:14px;color:#f5f5f7;margin-bottom:10px;font-weight:500">${scaled.name}</div><div class="meal-macros"><span><span class="dot p"></span>Б ${scaled.protein}г</span><span><span class="dot f"></span>Ж ${scaled.fat}г</span><span><span class="dot c"></span>У ${scaled.carbs}г</span></div>${ingredientsHtml}</div>`;
   }).join('');
 }
 
 function openStore(store, query){
   hap('light');
   const encoded = encodeURIComponent(query);
-  let url;
-  if(store === 'pyaterochka'){
-    url = `https://5ka.ru/search?query=${encoded}`;
-  } else {
-    url = `https://magnit.ru/search?q=${encoded}`;
-  }
+  let url = store === 'pyaterochka' ? `https://5ka.ru/search?query=${encoded}` : `https://magnit.ru/search?q=${encoded}`;
   window.open(url, '_blank');
 }
 
 function copyShoppingList(){
   if(!currentMenu) loadMenu();
-  const profile = getProfile();
   const dailyKcal = calcDailyCalories();
-  const mealTargets = {
-    breakfast: Math.round(dailyKcal * 0.27),
-    lunch: Math.round(dailyKcal * 0.38),
-    snack: Math.round(dailyKcal * 0.12),
-    dinner: Math.round(dailyKcal * 0.23)
-  };
-  
-  // Собираем все ингредиенты и группируем по категориям
+  const mealTargets = {breakfast: Math.round(dailyKcal * 0.27), lunch: Math.round(dailyKcal * 0.38), snack: Math.round(dailyKcal * 0.12), dinner: Math.round(dailyKcal * 0.23)};
   const categories = {};
   Object.keys(currentMenu).forEach(mealKey => {
     const scaled = scaleRecipe(currentMenu[mealKey], mealTargets[mealKey]);
@@ -779,12 +732,9 @@ function copyShoppingList(){
       categories[ing.category].push(ing);
     });
   });
-  
-  // Формируем текст
   let text = '🛒 СПИСОК ПОКУПОК\n';
   text += `📅 На ${new Date().toLocaleDateString('ru-RU')}\n`;
   text += `🔥 Норма: ${dailyKcal} ккал/день\n\n`;
-  
   Object.keys(categories).forEach(cat => {
     text += `${cat}:\n`;
     categories[cat].forEach(ing => {
@@ -793,45 +743,80 @@ function copyShoppingList(){
     });
     text += '\n';
   });
-  
-  // Копируем в буфер
-  if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(text).then(() => {
-      showToast();
-    }).catch(() => {
-      fallbackCopy(text);
-    });
-  } else {
-    fallbackCopy(text);
-  }
+  if(navigator.clipboard && navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(() => showToast()).catch(() => fallbackCopy(text));}
+  else{fallbackCopy(text);}
 }
 
 function fallbackCopy(text){
-  const textarea = document.createElement('textarea');
-  textarea.value = text;
-  textarea.style.position = 'fixed';
-  textarea.style.opacity = '0';
-  document.body.appendChild(textarea);
-  textarea.select();
+  const textarea = document.createElement('textarea');textarea.value = text;textarea.style.position = 'fixed';textarea.style.opacity = '0';document.body.appendChild(textarea);textarea.select();
   try{document.execCommand('copy');showToast();}catch(e){alert('Не удалось скопировать. Скопируй вручную.');}
   document.body.removeChild(textarea);
 }
 
-function showToast(){
-  const toast = document.getElementById('copyToast');
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 2000);
-}
+function showToast(){const toast = document.getElementById('copyToast');toast.classList.add('show');setTimeout(() => toast.classList.remove('show'), 2000);}
 
 function drawNutrition(){
-  const calories=calcDailyCalories();
-  const macros=calcMacros();
+  const calories=calcDailyCalories();const macros=calcMacros();
   document.getElementById('dailyCalories').textContent=calories;
   document.getElementById('proteinGrams').textContent=macros.protein+'г';
   document.getElementById('fatGrams').textContent=macros.fat+'г';
   document.getElementById('carbsGrams').textContent=macros.carbs+'г';
-  loadMenu();
-  renderMeals();
+  loadMenu();renderMeals();
+}
+
+// ===== ТРЕНЕРЫ =====
+function updateTrainerUI(){
+  const sub = getSubscription();
+  const aiCard = document.getElementById('aiTrainerCard');
+  const humanCard = document.getElementById('humanTrainerCard');
+  const aiBtn = document.getElementById('aiSubscribeBtn');
+  const humanBtn = document.getElementById('humanSubscribeBtn');
+  
+  if(sub.ai){
+    aiCard.querySelector('.trainer-price').textContent = '✓ Активна до ' + new Date(sub.aiUntil).toLocaleDateString('ru-RU');
+    aiBtn.textContent = '✓ Подписка активна';
+    aiBtn.classList.add('locked');
+    aiBtn.onclick = null;
+    if(!aiCard.querySelector('.trainer-badge')){
+      const badge = document.createElement('div');
+      badge.className = 'trainer-badge';
+      badge.textContent = 'АКТИВНА';
+      aiCard.appendChild(badge);
+    }
+  }
+  
+  if(sub.human){
+    humanCard.querySelector('.trainer-price').textContent = '✓ Активна до ' + new Date(sub.humanUntil).toLocaleDateString('ru-RU');
+    humanBtn.textContent = '✓ Подписка активна';
+    humanBtn.classList.add('locked');
+    humanBtn.onclick = null;
+    if(!humanCard.querySelector('.trainer-badge')){
+      const badge = document.createElement('div');
+      badge.className = 'trainer-badge';
+      badge.textContent = 'АКТИВНА';
+      humanCard.appendChild(badge);
+    }
+  }
+}
+
+function subscribeTrainer(type){
+  const sub = getSubscription();
+  if(sub[type]){alert('Подписка уже активна');return;}
+  
+  // Имитация оплаты (в реальности здесь будет Telegram Payments)
+  const confirmed = confirm(`Оформить подписку на ${type === 'ai' ? 'ИИ-тренера (299 ₽/мес)' : 'Живого тренера (4 990 ₽/мес)'}?\n\nВ демо-режиме подписка активируется бесплатно на 30 дней.`);
+  
+  if(confirmed){
+    const until = new Date();
+    until.setDate(until.getDate() + 30);
+    sub[type] = true;
+    sub[type + 'Until'] = until.toISOString();
+    saveSubscription(sub);
+    updateTrainerUI();
+    renderPrograms();
+    hap('success');
+    alert(`✓ Подписка активирована!\nДействует до ${until.toLocaleDateString('ru-RU')}`);
+  }
 }
 
 function drawStats(){
@@ -862,8 +847,6 @@ function drawStats(){
   const rev2=[...history].reverse().slice(0,10);
   histBox.innerHTML=rev2.map((h,idx)=>{const dateObj=new Date(h.date);const dateStr=dateObj.toLocaleDateString('ru-RU',{day:'numeric',month:'long'});const exHtml=allExercises.filter(e=>h.exercises[e.id]).map(e=>{const v=h.exercises[e.id];const unit=isCardio(e)?(e.unit||'сек'):(e.id==='pl'?'сек':'повт');return `<div class="history-ex"><span class="n">${e.name}</span><span class="v">${v.sets}×${v.reps} ${unit}${(!isCardio(e)&&v.weight)?', '+v.weight+' кг':''}</span></div>`;}).join('');return `<div class="history-card"><div class="history-date"><span>${dateStr}</span><span class="num">#${history.length-idx}</span></div>${exHtml}</div>`;}).join('');
 }
-
-function buyTrainer(type){hap('medium');alert(type==='ai'?'ИИ-тренер: оплата через Telegram Payments (скоро)':'Живой тренер: оплата через Telegram Payments (скоро)');}
 
 checkProfile();
 </script>
